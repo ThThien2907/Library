@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mnu_home"
+        android:title="Trang chủ"
+        android:icon="@drawable/ic_home"/>
+
+    <item android:id="@+id/mnu_borrow_return"
+        android:title="Mượn trả"
+        android:icon="@drawable/ic_borrow_return"/>
+
+    <item android:id="@+id/mnu_account"
+        android:title="Tài khoản"
+        android:icon="@drawable/ic_account"/>
+</menu>
