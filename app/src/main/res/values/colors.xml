@@ -8,14 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="secondary">#fff0de</color>
-    <color name="primary1">#FFCE92</color>
-    <color name="background">#fefef2</color>
     <color name="primary">#b1454a</color>
+    <color name="secondary">#fff0de</color>
+    <color name="background">#fefef2</color>
     <color name="black_200">#020202</color>
     <color name="black_300">#333333</color>
     <color name="black_400">#1f1e31</color>
     <color name="black_500">#555555</color>
     <color name="gray_100">#888888</color>
+    <color name="red">#FF0000</color>
 
 </resources>

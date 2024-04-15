@@ -10,3 +10,4 @@ data class Book(
     var author: String,
     var category_value: String
 )
+data class BookList(var data: ArrayList<Book>)

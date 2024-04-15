@@ -23,7 +23,7 @@ class BookAdapterRcv: RecyclerView.Adapter<BookAdapterRcv.BookViewHolder>() {
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
         var book = listBook[position]
-//        holder.binding.imgCardBook.setImageResource(R.mipmap.book_img)
+        holder.binding.imgCardBook.setImageResource(R.mipmap.book_img)
         holder.binding.tvCardTitle.text = book.title
     }
 

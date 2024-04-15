@@ -12,21 +12,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="15dp"
         android:background="@drawable/white_background_alpha_70"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingHorizontal="10dp"
-        android:paddingVertical="30dp"
-        android:layout_margin="15dp">
+        android:paddingVertical="30dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:text="ĐĂNG KÝ"
-            android:textStyle="bold"
             android:textColor="@color/primary"
-            android:textSize="40sp"
-            android:layout_marginBottom="20dp"/>
+            android:textSize="35sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -38,8 +38,9 @@
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="3dp"
-            app:endIconMode="clear_text"
             app:cursorColor="@color/black"
+            app:cursorErrorColor="@color/black"
+            app:endIconMode="clear_text"
             app:endIconTint="@color/black"
             app:hintTextColor="@color/black"
             app:startIconDrawable="@drawable/ic_person">
@@ -63,6 +64,7 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="3dp"
             app:cursorColor="@color/black"
+            app:cursorErrorColor="@color/black"
             app:endIconMode="clear_text"
             app:endIconTint="@color/black"
             app:hintTextColor="@color/black"
@@ -87,6 +89,7 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="3dp"
             app:cursorColor="@color/black"
+            app:cursorErrorColor="@color/black"
             app:endIconMode="password_toggle"
             app:endIconTint="@color/black"
             app:hintTextColor="@color/black"
@@ -111,6 +114,7 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="3dp"
             app:cursorColor="@color/black"
+            app:cursorErrorColor="@color/black"
             app:endIconMode="password_toggle"
             app:endIconTint="@color/black"
             app:hintTextColor="@color/black"
@@ -139,25 +143,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bạn đã có tài khoản rồi?"
-                android:textSize="16sp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đăng nhập"
-                android:textSize="16sp"
-                android:textColor="@color/primary"
-                android:textStyle="italic"
+                android:clickable="true"
                 android:paddingStart="5dp"
-                android:clickable="true"/>
+                android:text="Đăng nhập"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:textStyle="italic" />
         </LinearLayout>
 
     </LinearLayout>
