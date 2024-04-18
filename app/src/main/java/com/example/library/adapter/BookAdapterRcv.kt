@@ -1,15 +1,17 @@
 package com.example.library.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.library.R
 import com.example.library.databinding.ItemBookBinding
 import com.example.library.model.Book
 
-class BookAdapterRcv: RecyclerView.Adapter<BookAdapterRcv.BookViewHolder>() {
+class BookAdapterRcv(val context: Context): RecyclerView.Adapter<BookAdapterRcv.BookViewHolder>() {
     private lateinit var listBook: ArrayList<Book>
     inner class BookViewHolder(val binding: ItemBookBinding) : RecyclerView.ViewHolder(binding.root) {}
 
@@ -23,7 +25,8 @@ class BookAdapterRcv: RecyclerView.Adapter<BookAdapterRcv.BookViewHolder>() {
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
         var book = listBook[position]
-        holder.binding.imgCardBook.setImageResource(R.mipmap.book_img)
+        Glide.with(context).load(book.image).into(holder.binding.imgCardBook)
+
         holder.binding.tvCardTitle.text = book.title
     }
 

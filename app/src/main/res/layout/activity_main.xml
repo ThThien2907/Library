@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager2"
+    <FrameLayout
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_nav"/>
