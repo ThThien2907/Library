@@ -10,4 +10,4 @@ data class Book(
     var author: String,
     var category_value: String
 )
-data class BookList(var data: ArrayList<Book>)
+data class Books(var message: String, var data: ArrayList<Book>, var total_page: Int)

@@ -4,38 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.HomeFragment">
+    tools:context=".activity.fragment.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-<!--        <com.google.android.material.appbar.AppBarLayout-->
-<!--            android:id="@+id/appbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="150dp"-->
-<!--            android:background="@drawable/primary_bg_corner_30"-->
-<!--            android:fitsSystemWindows="true">-->
-
-<!--            <com.google.android.material.appbar.CollapsingToolbarLayout-->
-<!--                android:id="@+id/collapsing_toolbar"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:fitsSystemWindows="true"-->
-<!--                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"-->
-<!--                app:contentScrim="@color/primary"-->
-<!--                app:title="Abc">-->
-
-
-<!--                <androidx.appcompat.widget.Toolbar-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="?attr/actionBarSize"-->
-<!--                    app:layout_collapseMode="pin">-->
-<!--                </androidx.appcompat.widget.Toolbar>-->
-<!--            </com.google.android.material.appbar.CollapsingToolbarLayout>-->
-<!--        </com.google.android.material.appbar.AppBarLayout>-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,7 +31,7 @@
                     android:id="@+id/edt_search"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/white_background_alpha_70"
+                    android:background="@drawable/white_bg_alpha_70"
                     android:drawableStart="@drawable/ic_search"
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/primary"
@@ -71,17 +46,18 @@
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginVertical="15dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp">
+                    android:layout_height="200dp">
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/view_pager2_banner"
@@ -98,10 +74,58 @@
                         android:layout_marginBottom="10dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rcv_book"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thể loại sách"
+                    android:textSize="24sp"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"/>
+
+                <Spinner
+                    android:id="@+id/spn_category_book"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rcv_book"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="MissingConstraints"
+                        android:nestedScrollingEnabled="false"/>
+
+                    <ProgressBar
+                        android:id="@+id/loading_book"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="@id/rcv_book"
+                        app:layout_constraintStart_toStartOf="@+id/rcv_book"
+                        app:layout_constraintTop_toTopOf="@id/rcv_book"
+                        tools:ignore="MissingConstraints"
+                        android:layout_marginTop="130dp"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ProgressBar
+                    android:id="@+id/loading_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:visibility="gone"/>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>

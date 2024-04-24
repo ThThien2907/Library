@@ -6,10 +6,10 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.library.R
 import com.example.library.databinding.ActivityMainBinding
-import com.example.library.fragment.AccountFragment
-import com.example.library.fragment.BorrowReturnFragment
-import com.example.library.fragment.HomeFragment
-import com.example.library.fragment.ViewPager2Adapter
+import com.example.library.activity.fragment.AccountFragment
+import com.example.library.activity.fragment.BorrowReturnFragment
+import com.example.library.activity.fragment.HomeFragment
+import com.example.library.activity.fragment.ViewPager2Adapter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

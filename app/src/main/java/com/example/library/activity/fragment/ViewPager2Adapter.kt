@@ -1,4 +1,4 @@
-package com.example.library.fragment
+package com.example.library.activity.fragment
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
