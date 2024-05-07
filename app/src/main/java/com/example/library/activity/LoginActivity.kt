@@ -3,54 +3,106 @@ package com.example.library.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Patterns
+import android.view.View
 import android.widget.Toast
-import com.example.library.R
-import com.example.library.R.*
+import com.example.library.api.AuthApi
+import com.example.library.api.ErrorResponse
+import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityLoginBinding
-import java.util.regex.Pattern
+import com.example.library.model.Token
+import com.example.library.utils.AuthDBHelper
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
+    private lateinit var db : AuthDBHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val validation = validationForm()
+        validOnTextChange()
 
-
+        db = AuthDBHelper(this@LoginActivity)
+//        binding.btnLogin.setOnClickListener {
+//            db.deleteToken2("UR")
+//            Log.e("delete", db.getToken().toString())
+//        }
         binding.btnLogin.setOnClickListener {
-            val email = binding.edtEmail.text.toString()
-            val password = binding.edtPassword.text.toString()
-            if (validation){
-                Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-            } else {
+            if (validOnClickBtnLogin()) {
+                binding.progressBar.visibility = View.VISIBLE
+                val email = binding.edtEmail.text.toString().trim()
+                val password = binding.edtPassword.text.toString().trim()
 
+                val data = authApi.login(email, password)
+                data.enqueue(object : Callback<Token> {
+                    override fun onResponse(call: Call<Token>, response: Response<Token>) {
+                        if (!response.isSuccessful) {
+                            val errorBody = response.errorBody()?.string()
+                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            Toast.makeText(this@LoginActivity, errorResponse.errors[0], Toast.LENGTH_LONG).show()
+                            binding.progressBar.visibility = View.GONE
+                        }
+                        else {
+                            Handler().postDelayed(Runnable {
+                                val result = response.body()
+                                if (result != null) {
+                                    val token = Token(result.accessToken, result.refreshToken, result.role)
+
+                                    val rs = db.addNewToken(token)
+                                    if (rs >= 1){
+                                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                }
+                            },2000)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Token>, t: Throwable) {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Có lỗi gì đó xảy ra!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.progressBar.visibility = View.GONE
+                    }
+                })
             }
         }
 
         binding.tvRegister.setOnClickListener {
-            val i = Intent(this, RegisterActivity::class.java)
-            startActivity(i)
-            finish()
+            binding.progressBar.visibility = View.VISIBLE
+            Handler().postDelayed(Runnable {
+                val i = Intent(this, RegisterActivity::class.java)
+                startActivity(i)
+                finish()
+            },1000)
         }
     }
+    private fun validOnClickBtnLogin(): Boolean {
+        binding.layoutEdtEmail.error = validEmail()
+        binding.layoutEdtPassword.error = validPassword()
 
-    private fun validationForm(): Boolean {
+        return binding.layoutEdtEmail.error == null && binding.layoutEdtPassword.error == null
+    }
+    private fun validOnTextChange(){
         binding.edtEmail.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus){
+            if (!hasFocus)
                 binding.layoutEdtEmail.error = validEmail()
-            }
         }
 
         binding.edtPassword.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus){
+            if (!hasFocus)
                 binding.layoutEdtPassword.error = validPassword()
-            }
         }
-
-        return binding.layoutEdtEmail.error == null && binding.layoutEdtPassword.error == null
     }
 
     private fun validPassword(): String? {

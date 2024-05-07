@@ -19,7 +19,7 @@ class BannerAdapterRcv: RecyclerView.Adapter<BannerAdapterRcv.BannerViewHoler>()
 
     override fun onBindViewHolder(holder: BannerViewHoler, position: Int) {
         val banner = list[position]
-        holder.binding.imgBanner.setImageResource(banner.img)
+        holder.binding.imgBanner.setImageResource(banner.img!!)
     }
     @SuppressLint("NotifyDataSetChanged")
     fun setData(list: ArrayList<Banner>){

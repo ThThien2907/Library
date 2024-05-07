@@ -26,14 +26,12 @@ class CategoryAdapter(var context: Activity, var resource: Int, var objects: Lis
 
     @SuppressLint("InflateParams")
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-//        convertView = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
         val row = context.layoutInflater.inflate(R.layout.item_category, null)
         val category = objects[position]
 
         val tvCategory = row.findViewById<TextView>(R.id.tv_category)
 
         tvCategory.text = category.value
-//        return super.getDropDownView(position, convertView, parent)
         return row
     }
 }

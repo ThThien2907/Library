@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Library</string>
+    <string name="hotline">0123456789</string>
+    <string name="website">https://hcmact.edu.vn/</string>
 </resources>

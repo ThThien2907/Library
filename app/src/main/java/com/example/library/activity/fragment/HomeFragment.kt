@@ -1,6 +1,7 @@
 package com.example.library.activity.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -12,8 +13,10 @@ import android.widget.Toast
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.example.library.R
+import com.example.library.activity.BookDetailActivity
 import com.example.library.adapter.BannerAdapterRcv
 import com.example.library.adapter.BookAdapterRcv
 import com.example.library.adapter.CategoryAdapter
@@ -21,13 +24,14 @@ import com.example.library.api.BookApi
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.FragmentHomeBinding
 import com.example.library.model.*
+import com.example.library.utils.OnItemBookClickListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
 @Suppress("DEPRECATION")
-class HomeFragment : Fragment() {
+class HomeFragment() : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapterBook: BookAdapterRcv
     private lateinit var adapterBanner: BannerAdapterRcv
@@ -60,7 +64,7 @@ class HomeFragment : Fragment() {
 
         //#region set adapter cho recycleview book
         listBook = ArrayList()
-        adapterBook = BookAdapterRcv(this.requireContext())
+        adapterBook = BookAdapterRcv(this.requireContext(),this)
         adapterBook.setData(listBook)
         binding.rcvBook.adapter = adapterBook
         val layoutManager = GridLayoutManager(context, 3)
@@ -70,6 +74,8 @@ class HomeFragment : Fragment() {
         initBanner()
         initCategory()
         closeKeyBoard()
+        binding.swipeRefreshLayout.setOnRefreshListener(this@HomeFragment)
+
     }
 
     //đổ dữ liệu cho spinner thể loại
@@ -79,13 +85,17 @@ class HomeFragment : Fragment() {
 
         data.enqueue(object : Callback<Categories> {
             override fun onResponse(call: Call<Categories>, response: Response<Categories>) {
-                listCategory.addAll(response.body()!!.categories)
+                if (response.isSuccessful){
+                    val result = response.body()
+                    if (result != null){
+                        listCategory.addAll(result.categories)
+                    }
+                }
             }
 
             override fun onFailure(call: Call<Categories>, t: Throwable) {
                 Toast.makeText(context, "Có lỗi gì đó xảy ra!", Toast.LENGTH_SHORT).show()
             }
-
         })
         listCategory.add(0,Category("ALL", "Tất cả thể loại"))
         adapterCategory = CategoryAdapter(this.requireActivity(), R.layout.item_category_selected, listCategory)
@@ -105,7 +115,7 @@ class HomeFragment : Fragment() {
                         initBook(adapterCategory.getItem(position)?.code.toString())
                     }else{
                         isFilterByCategory = false
-                        initBook("")
+                        initBook("ALL")
                     }
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -152,7 +162,7 @@ class HomeFragment : Fragment() {
                     if (result != null) {
                         if (result.message == "Successfully"){
                             listBook.addAll(result.data)
-                            totalPage = result.total_page
+                            totalPage = result.totalPage!!
                             adapterBook.setData(listBook)
 
                             this@HomeFragment.currentPage += 1
@@ -173,7 +183,6 @@ class HomeFragment : Fragment() {
                                             binding.loadingMore.visibility = View.GONE
                                             isLastPage = true
                                         }
-
                                     }
                                 }
 
@@ -203,7 +212,7 @@ class HomeFragment : Fragment() {
                         if (result.message == "Successfully"){
                             listBook.addAll(result.data)
                             adapterBook.setData(listBook)
-                            totalPage = result.total_page
+                            totalPage = result.totalPage!!
                             this@HomeFragment.currentPage += 1
 
                             binding.loadingBook.visibility = View.GONE
@@ -272,4 +281,17 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    override fun onItemBookClick(book: Book) {
+        val intent = Intent(this.activity, BookDetailActivity::class.java)
+        intent.putExtra("book", book)
+        startActivity(intent)
+    }
+
+    override fun onRefresh() {
+        Handler().postDelayed(Runnable {
+            binding.swipeRefreshLayout.isRefreshing = false
+        },2000)
+    }
+
 }

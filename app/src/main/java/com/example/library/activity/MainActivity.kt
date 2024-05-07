@@ -3,54 +3,40 @@ package com.example.library.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.library.R
 import com.example.library.databinding.ActivityMainBinding
 import com.example.library.activity.fragment.AccountFragment
-import com.example.library.activity.fragment.BorrowReturnFragment
+import com.example.library.activity.fragment.HistoryFragment
 import com.example.library.activity.fragment.HomeFragment
-import com.example.library.activity.fragment.ViewPager2Adapter
+import com.example.library.model.Token
+import java.util.*
+import kotlin.concurrent.fixedRateTimer
 
-class MainActivity : AppCompatActivity() {
+@Suppress("DEPRECATION")
+class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
-    private var HomeFragment = HomeFragment()
-    private var BorrowReturnFragment = BorrowReturnFragment()
-    private var AccountFragment = AccountFragment()
+    private var homeFragment = HomeFragment()
+    private var historyFragment = HistoryFragment()
+    private var accountFragment = AccountFragment()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(HomeFragment)
-//        val adaperViewPager = ViewPager2Adapter(this)
-//        binding.viewPager2.adapter = adaperViewPager
-//        binding.viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                when (position){
-//                    0 -> {
-//                        binding.bottomNav.menu.findItem(R.id.mnu_home).isChecked = true
-//                    }
-//                    1 -> {
-//                        binding.bottomNav.menu.findItem(R.id.mnu_borrow_return).isChecked = true
-//                    }
-//                    2 -> {
-//                        binding.bottomNav.menu.findItem(R.id.mnu_account).isChecked = true
-//                    }
-//                }
-//            }
-//        })
+
+        replaceFragment(homeFragment)
         binding.bottomNav.setOnNavigationItemSelectedListener {menuItem ->
             when (menuItem.itemId){
                 R.id.mnu_home -> {
-                    replaceFragment(HomeFragment)
+                    replaceFragment(homeFragment)
                     true
                 }
                 R.id.mnu_borrow_return -> {
-                    replaceFragment(BorrowReturnFragment)
+                    replaceFragment(historyFragment)
                     true
                 }
                 R.id.mnu_account -> {
-                    replaceFragment(AccountFragment)
+                    replaceFragment(accountFragment)
                     true
                 }
                 else -> {
@@ -59,10 +45,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    fun replaceFragment(fragment: Fragment){
-        val manager = supportFragmentManager
-        val transaction = manager.beginTransaction()
-        transaction.replace(binding.contentFrame.id, fragment)
-        transaction.commit()
+    private fun replaceFragment(fragment: Fragment){
+            val manager = supportFragmentManager
+            val transaction = manager.beginTransaction()
+            transaction.replace(binding.contentFrame.id, fragment)
+            transaction.commit()
     }
+
 }

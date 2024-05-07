@@ -1,4 +1,11 @@
 package com.example.library.model
 
-data class Category(var code: String, var value: String)
-data class Categories(var categories: ArrayList<Category>)
+import com.google.gson.annotations.SerializedName
+
+data class Category(
+    @SerializedName("code"  ) var code  : String? = null,
+    @SerializedName("value" ) var value : String? = null
+    )
+data class Categories(
+    @SerializedName("categories" ) var categories : ArrayList<Category> = arrayListOf()
+)

@@ -15,7 +15,7 @@ object RetrofitService {
         return Retrofit.Builder()
                 //10.0.68.231
                 //192.168.188.3
-            .baseUrl("http://10.0.68.231/CT06/do_an/api/routes/")
+            .baseUrl("http://192.168.188.3/CT06/do_an/api/routes/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
