@@ -10,21 +10,18 @@ import com.example.library.databinding.ItemBookBinding
 import com.example.library.model.Book
 import com.example.library.utils.OnItemBookClickListener
 
-class BookAdapterRcv(val context: Context, val listener: OnItemBookClickListener): RecyclerView.Adapter<BookAdapterRcv.BookViewHolder>(){
+class BookAdapterRcv(val context: Context, private val listener: OnItemBookClickListener): RecyclerView.Adapter<BookAdapterRcv.BookViewHolder>(){
     private lateinit var listBook: ArrayList<Book>
 
-    class BookViewHolder(val binding: ItemBookBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class BookViewHolder(val binding: ItemBookBinding) : RecyclerView.ViewHolder(binding.root){
 
     }
-
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
         return BookViewHolder(ItemBookBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int {
-        return this.listBook.size
+        return listBook.size
     }
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {

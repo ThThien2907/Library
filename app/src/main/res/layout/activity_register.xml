@@ -155,14 +155,14 @@
                 android:textSize="18sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <Button
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/primary_bg_corner_10"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:text="Đăng ký"
             android:textAllCaps="false"
             android:textColor="@color/white"

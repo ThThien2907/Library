@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,7 @@ import retrofit2.Response
 
 
 @Suppress("DEPRECATION")
-class HomeFragment() : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnRefreshListener {
+class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapterBook: BookAdapterRcv
     private lateinit var adapterBanner: BannerAdapterRcv
@@ -131,8 +132,9 @@ class HomeFragment() : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.O
         binding.loadingBook.visibility = View.VISIBLE
 
         //Kiểm tra có lọc theo thể loại chưa
-        if (!isFilterByCategory)
+        if (!isFilterByCategory){
             loadDataBook(currentPage)
+        }
         else{
             loadDataBookByCategory(category_code, currentPage)
         }
@@ -199,7 +201,7 @@ class HomeFragment() : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.O
                 }
             })
             isLoading = false
-        }, 2000)
+        }, 1000)
     }
 
     private fun loadDataBook(currentPage: Int) {
@@ -233,7 +235,7 @@ class HomeFragment() : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.O
                 }
             })
             isLoading = false
-        }, 2000)
+        }, 1000)
     }
 
     private fun initBanner() {
@@ -283,15 +285,17 @@ class HomeFragment() : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.O
     }
 
     override fun onItemBookClick(book: Book) {
-        val intent = Intent(this.activity, BookDetailActivity::class.java)
+        val intent = Intent(activity, BookDetailActivity::class.java)
         intent.putExtra("book", book)
         startActivity(intent)
     }
 
     override fun onRefresh() {
-        Handler().postDelayed(Runnable {
+        Handler().postDelayed({
+            parentFragmentManager.beginTransaction().detach(this).commitNow()
+            parentFragmentManager.beginTransaction().attach(this).commitNow()
             binding.swipeRefreshLayout.isRefreshing = false
-        },2000)
+        },1000)
     }
 
 }

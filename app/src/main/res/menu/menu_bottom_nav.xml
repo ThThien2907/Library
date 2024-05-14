@@ -4,7 +4,7 @@
         android:title="Trang chủ"
         android:icon="@drawable/ic_home"/>
 
-    <item android:id="@+id/mnu_borrow_return"
+    <item android:id="@+id/mnu_history"
         android:title="Lịch sử"
         android:icon="@drawable/ic_history"/>
 
