@@ -96,7 +96,7 @@
                 android:visibility="visible"
                 android:paddingVertical="10dp"
                 android:paddingHorizontal="5dp"
-                android:background="@drawable/white_bg_btn">
+                android:background="@drawable/ripple_effect_transparent_bg">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                     android:orientation="horizontal"
                     android:paddingVertical="10dp"
                     android:paddingHorizontal="5dp"
-                    android:background="@drawable/white_bg_btn">
+                    android:background="@drawable/ripple_effect_transparent_bg">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -150,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginStart="50dp"
-                    android:background="@drawable/white_bg_btn"
+                    android:background="@drawable/ripple_effect_transparent_bg"
                     android:paddingVertical="10dp"
                     android:paddingHorizontal="5dp">
 

@@ -11,6 +11,7 @@ import com.example.library.activity.fragment.AccountFragment
 import com.example.library.activity.fragment.HistoryFragment
 import com.example.library.activity.fragment.HomeFragment
 import com.example.library.model.Token
+import com.qamar.curvedbottomnaviagtion.CurvedBottomNavigation
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -33,32 +34,46 @@ class MainActivity : AppCompatActivity(){
             add(R.id.content_frame, accountFragment).hide(accountFragment)
         }.commit()
 
-        binding.bottomNav.setOnNavigationItemSelectedListener {menuItem ->
-            when (menuItem.itemId){
-                R.id.mnu_home -> {
+//        binding.bottomNav.setOnNavigationItemSelectedListener {menuItem ->
+//            when (menuItem.itemId){
+//                R.id.mnu_home -> {
+//                    replaceFragment(homeFragment)
+//                    true
+//                }
+//                R.id.mnu_history -> {
+//                    replaceFragment(historyFragment)
+//                    true
+//                }
+//                R.id.mnu_account -> {
+//                    replaceFragment(accountFragment)
+//                    true
+//                }
+//                else -> {
+//                    false
+//                }
+//            }
+//        }
+        val bottomNavigation = findViewById<CurvedBottomNavigation>(R.id.bottom_nav)
+        bottomNavigation.add(CurvedBottomNavigation.Model(1,"Trang chủ", R.drawable.ic_home))
+        bottomNavigation.add(CurvedBottomNavigation.Model(2, "Lịch sử",R.drawable.ic_history))
+        bottomNavigation.add(CurvedBottomNavigation.Model(3, "Tài khoản",R.drawable.ic_account))
+
+        bottomNavigation.show(1)
+        bottomNavigation.setOnClickMenuListener {
+            when (it.id){
+                1 -> {
                     replaceFragment(homeFragment)
-                    true
                 }
-                R.id.mnu_history -> {
+                2 -> {
                     replaceFragment(historyFragment)
-                    true
                 }
-                R.id.mnu_account -> {
+                3 -> {
                     replaceFragment(accountFragment)
-                    true
-                }
-                else -> {
-                    false
                 }
             }
         }
     }
-//    private fun replaceFragment(fragment: Fragment){
-//            val manager = supportFragmentManager
-//            val transaction = manager.beginTransaction()
-//            transaction.replace(R.id.content_frame, fragment)
-//            transaction.commit()
-//    }
+
     private fun replaceFragment(fragment: Fragment){
         val manager = supportFragmentManager
         val transaction = manager.beginTransaction()

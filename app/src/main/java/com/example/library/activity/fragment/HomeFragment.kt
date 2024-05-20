@@ -44,10 +44,13 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     private var isLoading = false
     private var isLastPage = false
     private var isFilterByCategory = false
+    private var isSearchByTitle = false
+
+    private var categoryCode = "ALL"
+    private var titleSearch = ""
     private var currentPage = 1
     private var totalPage = 0
-    private var limitPerPage = 12
-
+    private var limitPerPage = 18
 
     private var bookApi = RetrofitService.getInstance().create(BookApi::class.java)
 
@@ -74,9 +77,21 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
 
         initBanner()
         initCategory()
-        closeKeyBoard()
+        checkFilterByTitle()
+
         binding.swipeRefreshLayout.setOnRefreshListener(this@HomeFragment)
 
+        
+    }
+
+    private fun resetData() {
+        titleSearch = ""
+        categoryCode = "ALL"
+        isSearchByTitle = false
+        isFilterByCategory = false
+        isLoading = false
+        isLastPage = false
+        binding.edtSearch.text!!.clear()
     }
 
     //đổ dữ liệu cho spinner thể loại
@@ -98,6 +113,7 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
                 Toast.makeText(context, "Có lỗi gì đó xảy ra!", Toast.LENGTH_SHORT).show()
             }
         })
+
         listCategory.add(0,Category("ALL", "Tất cả thể loại"))
         adapterCategory = CategoryAdapter(this.requireActivity(), R.layout.item_category_selected, listCategory)
         binding.spnCategoryBook.adapter = adapterCategory
@@ -113,10 +129,12 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
                 ) {
                     if (adapterCategory.getItem(position)?.code.toString() != "ALL"){
                         isFilterByCategory = true
-                        initBook(adapterCategory.getItem(position)?.code.toString())
+                        categoryCode = adapterCategory.getItem(position)?.code.toString()
+                        initBook()
                     }else{
                         isFilterByCategory = false
-                        initBook("ALL")
+                        categoryCode = "ALL"
+                        initBook()
                     }
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -125,46 +143,173 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     }
 
     //Đổ dữ liệu cho RecycleView Book
-    private fun initBook(category_code: String) {
+    private fun initBook() {
         currentPage = 1
         isLastPage = false
         listBook = ArrayList()
         binding.loadingBook.visibility = View.VISIBLE
+        binding.tvNotification.visibility = View.GONE
 
         //Kiểm tra có lọc theo thể loại chưa
-        if (!isFilterByCategory){
-            loadDataBook(currentPage)
+        if (isFilterByCategory && isSearchByTitle){
+            loadDataBookByCategoryAndTitle()
+        }
+        else if (isFilterByCategory){
+            loadDataBookByCategory()
+        }
+        else if (isSearchByTitle){
+            loadDataBookByTitle()
         }
         else{
-            loadDataBookByCategory(category_code, currentPage)
+            loadDataBook()
         }
 
         //Loadmore data khi cuộn xuống cuối cùng
         binding.nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener {
                 v, scrollX, scrollY, oldScrollX, oldScrollY ->
             //check điểm cuối cùng khi cuộn xuống, nếu đến cuối thì load thêm data
-            if (scrollY - 82 == (binding.nestedScrollView.getChildAt(0).measuredHeight - binding.nestedScrollView.measuredHeight)){
-                if (isFilterByCategory && !isLastPage && !isLoading){
+//            Log.e("1", scrollY.toString())
+//            Log.e("2", (binding.nestedScrollView.getChildAt(0).measuredHeight - binding.nestedScrollView.measuredHeight).toString())
+                          //82
+            if (scrollY - 261 == (binding.nestedScrollView.getChildAt(0).measuredHeight - binding.nestedScrollView.measuredHeight)){
+                if (isFilterByCategory && isSearchByTitle && !isLastPage && !isLoading){
                     isLoading = true
-                    loadDataBookByCategory(category_code, currentPage)
-                }else if (!isLoading && !isLastPage){
+                    loadDataBookByCategoryAndTitle()
+                }
+                else if (isFilterByCategory && !isLastPage && !isLoading){
                     isLoading = true
-                    loadDataBook(currentPage)
+                    loadDataBookByCategory()
+                }
+                else if (isSearchByTitle && !isLastPage && !isLoading){
+                    isLoading = true
+                    loadDataBookByTitle()
+                }
+                else if (!isLastPage && !isLoading){
+                    isLoading = true
+                    loadDataBook()
                 }
             }
         })
     }
 
-    private fun loadDataBookByCategory(category_code: String, currentPage: Int){
+    private fun loadDataBookByCategoryAndTitle() {
         Handler().postDelayed( {
-            var data = bookApi.getBookByCategory(limitPerPage, currentPage, category_code)
+            var data = bookApi.getBookByTitleAndCategory(limitPerPage, currentPage, categoryCode, titleSearch)
+            data.enqueue(object : Callback<Books> {
+                override fun onResponse(call: Call<Books>, response: Response<Books>) {
+                    if (response.isSuccessful){
+                        val result = response.body()
+                        if (result != null) {
+                            if (result.message == "Successfully"){
+                                listBook.addAll(result.data)
+                                adapterBook.setData(listBook)
+
+                                this@HomeFragment.currentPage += 1
+
+                                binding.loadingBook.visibility = View.GONE
+
+                                //Kiểm tra trang tiếp theo của thể loại này có tồn tại sách nào không
+                                data = bookApi.getBookByTitle(limitPerPage, currentPage, titleSearch)
+                                data.enqueue(object : Callback<Books> {
+                                    override fun onResponse(call: Call<Books>, response: Response<Books>) {
+                                        val result1 = response.body()
+                                        if (result1 != null){
+                                            //Nếu có thì ProgressBar loading_more sẽ hiện lên
+                                            if (result1.message == "Successfully")
+                                                binding.loadingMore.visibility = View.VISIBLE
+                                            //Ngược lại thì ẩn đi và isLastPage bằng true để không load thêm nữa
+                                            else{
+                                                binding.loadingMore.visibility = View.GONE
+                                                isLastPage = true
+                                            }
+                                        }
+                                    }
+
+                                    override fun onFailure(call: Call<Books>, t: Throwable) {
+                                    }
+                                })
+                            }
+                            else{
+                                adapterBook.setData(listBook)
+                                binding.tvNotification.visibility = View.VISIBLE
+                                binding.loadingMore.visibility = View.GONE
+                                binding.loadingBook.visibility = View.GONE
+                                isLastPage = true
+                            }
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<Books>, t: Throwable) {
+                    Toast.makeText(context, "Có lỗi gì đó xảy ra!", Toast.LENGTH_SHORT).show()
+                }
+            })
+            isLoading = false
+        }, 1000)
+    }
+
+    private fun loadDataBookByTitle() {
+        Handler().postDelayed( {
+            var data = bookApi.getBookByTitle(limitPerPage, currentPage, titleSearch)
+            data.enqueue(object : Callback<Books> {
+                override fun onResponse(call: Call<Books>, response: Response<Books>) {
+                    if (response.isSuccessful){
+                        val result = response.body()
+                        if (result != null) {
+                            if (result.message == "Successfully"){
+                                listBook.addAll(result.data)
+                                adapterBook.setData(listBook)
+
+                                this@HomeFragment.currentPage += 1
+
+                                binding.loadingBook.visibility = View.GONE
+
+                                //Kiểm tra trang tiếp theo của thể loại này có tồn tại sách nào không
+                                data = bookApi.getBookByTitle(limitPerPage, currentPage, titleSearch)
+                                data.enqueue(object : Callback<Books> {
+                                    override fun onResponse(call: Call<Books>, response: Response<Books>) {
+                                        val result1 = response.body()
+                                        if (result1 != null){
+                                            //Nếu có thì ProgressBar loading_more sẽ hiện lên
+                                            if (result1.message == "Successfully")
+                                                binding.loadingMore.visibility = View.VISIBLE
+                                            //Ngược lại thì ẩn đi và isLastPage bằng true để không load thêm nữa
+                                            else{
+                                                binding.loadingMore.visibility = View.GONE
+                                                isLastPage = true
+                                            }
+                                        }
+                                    }
+
+                                    override fun onFailure(call: Call<Books>, t: Throwable) {
+                                    }
+                                })
+                            }else{
+                                adapterBook.setData(listBook)
+                                binding.tvNotification.visibility = View.VISIBLE
+                                binding.loadingMore.visibility = View.GONE
+                                binding.loadingBook.visibility = View.GONE
+                                isLastPage = true
+                            }
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<Books>, t: Throwable) {
+                    Toast.makeText(context, "Có lỗi gì đó xảy ra!", Toast.LENGTH_SHORT).show()
+                }
+            })
+            isLoading = false
+        }, 1000)
+    }
+
+    private fun loadDataBookByCategory(){
+        Handler().postDelayed( {
+            var data = bookApi.getBookByCategory(limitPerPage, currentPage, categoryCode)
             data.enqueue(object : Callback<Books> {
                 override fun onResponse(call: Call<Books>, response: Response<Books>) {
                     val result = response.body()
                     if (result != null) {
                         if (result.message == "Successfully"){
                             listBook.addAll(result.data)
-                            totalPage = result.totalPage!!
                             adapterBook.setData(listBook)
 
                             this@HomeFragment.currentPage += 1
@@ -172,7 +317,7 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
                             binding.loadingBook.visibility = View.GONE
 
                             //Kiểm tra trang tiếp theo của thể loại này có tồn tại sách nào không
-                            data = bookApi.getBookByCategory(limitPerPage, currentPage + 1, category_code)
+                            data = bookApi.getBookByCategory(limitPerPage, currentPage, categoryCode)
                             data.enqueue(object : Callback<Books> {
                                 override fun onResponse(call: Call<Books>, response: Response<Books>) {
                                     val result1 = response.body()
@@ -204,7 +349,7 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
         }, 1000)
     }
 
-    private fun loadDataBook(currentPage: Int) {
+    private fun loadDataBook() {
         Handler().postDelayed({
             val data = bookApi.getBook(limitPerPage, currentPage)
             data.enqueue(object : Callback<Books> {
@@ -273,13 +418,24 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
         })
     }
 
-    private fun closeKeyBoard() {
-        //đóng bàn phím khi nhập xong từ tìm kiếm
+    private fun checkFilterByTitle() {
+
         binding.edtSearch.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                val manager =
-                    v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                titleSearch = binding.edtSearch.text.toString()
+
+                //đóng bàn phím khi nhập xong từ tìm kiếm
+                val manager = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 manager.hideSoftInputFromWindow(v.windowToken, 0)
+
+                if (titleSearch.isNotEmpty()){
+                    isSearchByTitle = true
+                    initBook()
+                }
+                else{
+                    isSearchByTitle = false
+                    initBook()
+                }
             }
         }
     }
@@ -292,10 +448,64 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
 
     override fun onRefresh() {
         Handler().postDelayed({
-            parentFragmentManager.beginTransaction().detach(this).commitNow()
-            parentFragmentManager.beginTransaction().attach(this).commitNow()
+            resetData()
+            parentFragmentManager.beginTransaction().detach(this).commitNowAllowingStateLoss()
+            parentFragmentManager.beginTransaction().attach(this).commitNowAllowingStateLoss()
             binding.swipeRefreshLayout.isRefreshing = false
         },1000)
     }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("onPause", "onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("onStop", "onStop")
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.e("onDestroyView", "onDestroyView")
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("onDestroy", "onDestroy")
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.e("onDetach", "onDetach")
+
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.e("onAttach", "onAttach")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.e("onCreate", "onCreate")
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.e("onStart", "onStart")
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("onResume", "onResume")
+
+    }
+
 
 }

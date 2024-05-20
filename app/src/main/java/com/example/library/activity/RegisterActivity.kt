@@ -1,33 +1,45 @@
 package com.example.library.activity
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.Patterns
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsControllerCompat
+import com.example.library.R
 import com.example.library.api.AuthApi
 import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityRegisterBinding
 import com.example.library.model.Token
+import com.example.library.utils.Utils
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
 
-
+@SuppressLint("SetTextI18n")
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
+    private lateinit var dialogBox: Utils.DialogBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -45,28 +57,36 @@ class RegisterActivity : AppCompatActivity() {
                 val data = authApi.register(name, email, password, confirmPassword)
                 data.enqueue(object : Callback<Token> {
                     override fun onResponse(call: Call<Token>, response: Response<Token>) {
+                        dialogBox = Utils.DialogBox(this@RegisterActivity)
+                        dialogBox.createDialog()
+                        dialogBox.dialog.setCancelable(true)
+
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
                             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-                            Log.e("aaa", errorResponse.toString())
-                            Toast.makeText(this@RegisterActivity, errorResponse.errors[0], Toast.LENGTH_LONG).show()
                             binding.progressBar.visibility = View.GONE
+
+                            dialogBox.tvTitle.text = "Có lỗi xảy ra!"
+                            dialogBox.tvContent.text = errorResponse.errors[0]
+                            dialogBox.dialog.show()
+
+                            dialogBox.btnAccept.setOnClickListener {
+                                dialogBox.dialog.dismiss()
+                            }
                         }
                         else {
-                            Handler().postDelayed(Runnable {
-                                val result = response.body()
-                                if (result != null) {
-                                    val intent =
-                                        Intent(this@RegisterActivity, LoginActivity::class.java)
-                                    Toast.makeText(
-                                        this@RegisterActivity,
-                                        "Đăng ký thành công",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                            Handler(Looper.myLooper()!!).postDelayed( {
+                                val intent =
+                                    Intent(this@RegisterActivity, LoginActivity::class.java)
+                                dialogBox.tvTitle.text = "Thành công!"
+                                dialogBox.tvContent.text = "Đăng ký tài khoản thành công. Mời bạn đăng nhập."
+                                dialogBox.dialog.show()
+
+                                dialogBox.btnAccept.setOnClickListener {
                                     startActivity(intent)
                                     finish()
                                 }
-                            },2000)
+                            },500)
                         }
                     }
 
@@ -84,13 +104,13 @@ class RegisterActivity : AppCompatActivity() {
         }
 
 
-        binding.tvLogin.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            Handler().postDelayed(Runnable {
+            Handler(Looper.myLooper()!!).postDelayed( {
                 val i = Intent(this, LoginActivity::class.java)
                 startActivity(i)
                 finish()
-            }, 1000)
+            }, 500)
         }
     }
 
@@ -106,22 +126,22 @@ class RegisterActivity : AppCompatActivity() {
                 && binding.layoutEdtConfirmPassword.error == null
     }
     private fun validOnTextChange(){
-        binding.edtName.setOnFocusChangeListener { v, hasFocus ->
+        binding.edtName.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtName.error = validName()
         }
 
-        binding.edtEmail.setOnFocusChangeListener { v, hasFocus ->
+        binding.edtEmail.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtEmail.error = validEmail()
         }
 
-        binding.edtPassword.setOnFocusChangeListener { v, hasFocus ->
+        binding.edtPassword.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtPassword.error = validPassword()
         }
 
-        binding.edtConfirmPassword.setOnFocusChangeListener { v, hasFocus ->
+        binding.edtConfirmPassword.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtConfirmPassword.error = validConFirmPassword()
         }

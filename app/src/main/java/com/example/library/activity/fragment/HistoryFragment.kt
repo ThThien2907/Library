@@ -14,6 +14,7 @@ import com.example.library.utils.AuthDBHelper
 import com.example.library.utils.OnReloadListener
 import com.google.android.material.tabs.TabLayout
 
+@Suppress("DEPRECATION")
 class HistoryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnReloadListener {
     private lateinit var binding : FragmentHistoryBinding
     private lateinit var db : AuthDBHelper

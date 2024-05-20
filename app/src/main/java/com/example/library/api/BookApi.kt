@@ -19,4 +19,13 @@ interface BookApi {
 
     @GET("book/get_books.php")
     fun getBookByCategory(@Query("limit") limit: Int, @Query("page") page: Int, @Query("category_code") category_code: String): Call<Books>
+
+    @GET("book/get_books.php")
+    fun getBookByTitle(@Query("limit") limit: Int, @Query("page") page: Int, @Query("title") title: String): Call<Books>
+
+    @GET("book/get_books.php")
+    fun getBookByTitleAndCategory(@Query("limit") limit: Int,
+                                  @Query("page") page: Int,
+                                  @Query("category_code") category_code: String,
+                                  @Query("title") title: String): Call<Books>
 }

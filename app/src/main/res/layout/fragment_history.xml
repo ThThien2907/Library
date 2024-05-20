@@ -20,7 +20,17 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout_history"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:tabIndicator="@drawable/tab_indicator"
+                app:tabMode="fixed"
+                app:tabIndicatorGravity="stretch"
+                app:tabIndicatorAnimationMode="elastic"
+                app:tabSelectedTextColor="@color/primary"
+                app:tabTextColor="@color/white"
+                android:background="@color/primary"
+                app:tabIndicatorColor="@null"
+                android:paddingTop="10dp"
+                app:tabUnboundedRipple="false"/>
 
             <FrameLayout
                 android:id="@+id/container_layout_history"

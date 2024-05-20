@@ -61,7 +61,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
         val borrowReturnBookApi = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
 //        val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " + token.accessToken)
         val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " +
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU2NzYwNDIsImlhdCI6MTcxNTU4NjA0M30.prrpsNdzJvtdMdTKYDTZi_8Eg10aR6vVcjtycJg8SUA")
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc")
         data.enqueue(object : Callback<BorrowReturnBooks>{
             override fun onResponse(
                 call: Call<BorrowReturnBooks>,
@@ -91,7 +91,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
         val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
 //        val data = brb.returnBook("Bearer " + token.accessToken, borrowReturnBook.id!!)
         val data = brb.returnBook("Bearer " +
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU1ODYwNDEsImlhdCI6MTcxNTQ5NjA0MX0.sus44Q5_Pi0Z_Y4We7hKxsXN6ti9YCoEZx_S7vHlcjs"
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc"
             , borrowReturnBook.id!!.toInt())
         data.enqueue(object : Callback<BorrowReturnBooks>{
             override fun onResponse(
@@ -122,7 +122,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
 
         val token = db.getToken()
 //            val data = brb.borrowBook("Bearer " + token.accessToken, bookID)
-        val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU2NzYwNDIsImlhdCI6MTcxNTU4NjA0M30.prrpsNdzJvtdMdTKYDTZi_8Eg10aR6vVcjtycJg8SUA",
+        val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc",
             bookID.toInt())
         data.enqueue(object : Callback<BorrowReturnBooks>{
             override fun onResponse(

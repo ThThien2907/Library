@@ -8,20 +8,29 @@
     tools:context=".activity.RegisterActivity"
     tools:ignore="MissingConstraints">
 
-    <ProgressBar
+    <LinearLayout
         android:id="@+id/progress_bar"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:translationZ="10dp"
-        android:visibility="gone"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/gray_bg_corner_10"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="1dp"
+        android:visibility="gone"
+        android:elevation="4dp">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:translationZ="10dp"
+            android:indeterminateTint="@color/primary"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
+        android:layout_width="370dp"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:background="@drawable/white_bg_alpha_70"
@@ -68,7 +77,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:maxLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -96,7 +106,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -124,7 +135,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:maxLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -152,7 +164,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:maxLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -181,16 +194,21 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tv_login"
+            <LinearLayout
+                android:id="@+id/btn_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:paddingStart="5dp"
-                android:text="Đăng nhập"
-                android:textColor="@color/primary"
-                android:textSize="16sp"
-                android:textStyle="italic" />
+                android:background="@drawable/ripple_effect_transparent_bg"
+                android:padding="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đăng nhập"
+                    android:textColor="@color/primary"
+                    android:textSize="16sp"
+                    android:textStyle="italic"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

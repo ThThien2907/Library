@@ -12,12 +12,7 @@
     <ImageView
         android:layout_width="350dp"
         android:layout_height="350dp"
-        android:src="@mipmap/logo"/>
+        android:src="@mipmap/logo"
+        tools:ignore="ContentDescription" />
 
-    <Button
-        android:id="@+id/btnnnn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="delete"
-        android:visibility="gone"/>
 </LinearLayout>

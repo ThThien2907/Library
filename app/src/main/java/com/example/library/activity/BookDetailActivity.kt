@@ -6,29 +6,37 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.library.R
+import com.example.library.adapter.BookAdapterRcv
+import com.example.library.api.BookApi
 import com.example.library.api.BorrowReturnBookApi
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityBookDetailBinding
 import com.example.library.model.Book
+import com.example.library.model.Books
 import com.example.library.model.BorrowReturnBook
 import com.example.library.model.BorrowReturnBooks
 import com.example.library.utils.AuthDBHelper
+import com.example.library.utils.OnItemBookClickListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 @Suppress("DEPRECATION")
 @SuppressLint("SetTextI18n")
-class BookDetailActivity : AppCompatActivity() {
+class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
     private lateinit var binding: ActivityBookDetailBinding
+    private lateinit var adapter: BookAdapterRcv
+    private lateinit var listBook: ArrayList<Book>
     private lateinit var db: AuthDBHelper
     private var bookState : Int = 2
     private val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
+    private val bookApi = RetrofitService.getInstance().create(BookApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +51,7 @@ class BookDetailActivity : AppCompatActivity() {
             bookSelected = intent.getSerializableExtra("book") as Book
             initBookDetail(bookSelected)
             checkBorrowState(bookSelected.id!!)
+            initBookByCategory(bookSelected.categoryCode!!)
         }
 
         binding.btnBorrowBook.setOnClickListener {
@@ -61,8 +70,35 @@ class BookDetailActivity : AppCompatActivity() {
         Glide.with(this).load(bookSelected.image).into(binding.imgBook)
         binding.tvTitle.text = bookSelected.title
         binding.tvAuthor.text = bookSelected.author
-        binding.tvAvailable.text = bookSelected.available
         binding.tvDescription.text = bookSelected.description
+    }
+
+    private fun initBookByCategory(categoryCode: String) {
+        Handler().postDelayed({
+            listBook = ArrayList()
+            adapter = BookAdapterRcv(this, this)
+            val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            binding.rcvBookByCategory.layoutManager = layoutManager
+            binding.rcvBookByCategory.adapter = adapter
+            adapter.setData(listBook)
+
+            val data = bookApi.getBookByCategory(12, 1, categoryCode)
+            data.enqueue(object : Callback<Books>{
+                override fun onResponse(call: Call<Books>, response: Response<Books>) {
+                    if (response.isSuccessful){
+                        val result = response.body()
+                        if (result != null){
+                            listBook.addAll(result.data)
+                            adapter.setData(listBook)
+                            binding.progressBar.visibility = View.GONE
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Books>, t: Throwable) {
+                }
+            })
+        }, 1000)
     }
 
     private fun readBook(){
@@ -73,7 +109,7 @@ class BookDetailActivity : AppCompatActivity() {
     private fun borrowBook(bookID: String){
         val token = db.getToken()
 //            val data = brb.borrowBook("Bearer " + token.accessToken, bookID)
-        val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU2NzYwNDIsImlhdCI6MTcxNTU4NjA0M30.prrpsNdzJvtdMdTKYDTZi_8Eg10aR6vVcjtycJg8SUA",
+        val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc",
             bookID.toInt())
         data.enqueue(object : Callback<BorrowReturnBooks>{
             override fun onResponse(
@@ -97,7 +133,7 @@ class BookDetailActivity : AppCompatActivity() {
     private fun checkBorrowState(bookID: String){
         val token = db.getToken()
 //        val data = brb.getMyBorrowReturnBook("Bearer " + token.accessToken)
-        val data = brb.getMyBorrowReturnBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU2NzYwNDIsImlhdCI6MTcxNTU4NjA0M30.prrpsNdzJvtdMdTKYDTZi_8Eg10aR6vVcjtycJg8SUA")
+        val data = brb.getMyBorrowReturnBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc")
         data.enqueue(object : Callback<BorrowReturnBooks>{
             override fun onResponse(
                 call: Call<BorrowReturnBooks>,
@@ -121,11 +157,11 @@ class BookDetailActivity : AppCompatActivity() {
                                 binding.btnBorrowBook.isEnabled = false
                             }
                             1 -> {
-                                binding.btnBorrowBook.text = "Đọc ngay"
+                                binding.btnBorrowBook.text = "Đọc sách"
                                 binding.btnBorrowBook.isEnabled = true
                             }
                             2 -> {
-                                binding.btnBorrowBook.text = "Mượn ngay"
+                                binding.btnBorrowBook.text = "Mượn sách"
                                 binding.btnBorrowBook.isEnabled = true
                             }
                         }
@@ -139,5 +175,12 @@ class BookDetailActivity : AppCompatActivity() {
             override fun onFailure(call: Call<BorrowReturnBooks>, t: Throwable) {
             }
         })
+    }
+
+    override fun onItemBookClick(book: Book) {
+        val intent = Intent(this, BookDetailActivity::class.java)
+        intent.putExtra("book", book)
+        startActivity(intent)
+        finish()
     }
 }

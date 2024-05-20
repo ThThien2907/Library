@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,16 +12,33 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_nav"/>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--        android:id="@+id/bottom_nav"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="@color/white"-->
+<!--        app:menu="@menu/menu_bottom_nav"-->
+<!--        app:itemIconTint="@drawable/custom_bottom_nav"-->
+<!--        app:itemTextColor="@drawable/custom_bottom_nav"-->
+<!--        android:fitsSystemWindows="true"-->
+<!--        android:elevation="4dp"/>-->
+
+    <com.qamar.curvedbottomnaviagtion.CurvedBottomNavigation
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        app:menu="@menu/menu_bottom_nav"
-        app:itemIconTint="@drawable/custom_bottom_nav"
-        app:itemTextColor="@drawable/custom_bottom_nav"
-        android:fitsSystemWindows="true"
-        android:elevation="4dp"/>
+        android:background="@android:color/transparent"
+        app:cbn_background="@color/white"
+        app:cbn_curve_radius="26dp"
+        app:cbn_fabColor="@color/primary"
+        app:cbn_height="76dp"
+        app:cbn_iconColor="@color/primary"
+        app:cbn_icon_size="32dp"
+        app:cbn_selectedIconColor="@color/white"
+        app:cbn_selected_icon_size="48dp"
+        app:cbn_titleColor="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

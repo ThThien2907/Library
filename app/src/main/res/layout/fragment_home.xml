@@ -16,30 +16,39 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:background="@color/primary"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_abc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                android:background="@drawable/bg_white_stroke"
                 app:boxBackgroundMode="none"
+                app:cursorColor="@color/white"
+                app:endIconCheckable="false"
                 app:endIconMode="clear_text"
-                app:hintAnimationEnabled="false"
-                app:hintEnabled="false">
+                app:endIconTint="@color/white"
 
-                <EditText
+                app:expandedHintEnabled="false"
+
+                app:hintAnimationEnabled="false"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_search"
+                app:startIconTint="@color/white">
+
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_search"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/white_bg_alpha_70"
-                    android:drawableStart="@drawable/ic_search"
-                    android:drawablePadding="10dp"
-                    android:drawableTint="@color/primary"
+                    android:layout_height="wrap_content"
                     android:hint="Tìm kiếm sách..."
                     android:inputType="text"
-                    android:padding="10dp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black_300"
+                    android:maxLines="1"
+                    android:paddingStart="40dp"
+                    android:paddingTop="10dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
                     android:textSize="18sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,11 +64,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginVertical="15dp">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="80dp"
+                    android:orientation="vertical">
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="200dp">
@@ -67,70 +79,79 @@
                         <androidx.viewpager2.widget.ViewPager2
                             android:id="@+id/view_pager2_banner"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="match_parent" />
 
                         <me.relex.circleindicator.CircleIndicator3
                             android:id="@+id/indicator3_banner"
                             android:layout_width="wrap_content"
                             android:layout_height="10dp"
+                            android:layout_marginBottom="10dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            android:layout_marginBottom="10dp"/>
+                            app:layout_constraintStart_toStartOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thể loại sách"
-                        android:textSize="24sp"
-                        android:textColor="@color/primary"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="15dp"
-                        android:layout_marginStart="10dp"/>
+                        android:layout_marginBottom="8dp"
+                        android:text="Thể loại sách"
+                        android:textColor="@color/primary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
                     <Spinner
                         android:id="@+id/spn_category_book"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginBottom="10dp"
-                        />
+                        android:background="@android:color/transparent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp">
 
+                        <TextView
+                            android:id="@+id/tv_notification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Không tìm thấy sách"
+                            android:textColor="@color/gray_100"
+                            android:textSize="16sp"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rcv_book"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:ignore="MissingConstraints"
-                            android:nestedScrollingEnabled="false"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <ProgressBar
                             android:id="@+id/loading_book"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="50dp"
                             app:layout_constraintEnd_toEndOf="@id/rcv_book"
                             app:layout_constraintStart_toStartOf="@+id/rcv_book"
-                            app:layout_constraintTop_toTopOf="@id/rcv_book"
-                            tools:ignore="MissingConstraints"
-                            android:layout_marginTop="50dp"/>
+                            app:layout_constraintTop_toTopOf="@id/rcv_book" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <ProgressBar
                         android:id="@+id/loading_more"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

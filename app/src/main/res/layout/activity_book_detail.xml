@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.BookDetailActivity">
+    tools:context=".activity.BookDetailActivity"
+    tools:ignore="ContentDescription, HardcodedText">
 
     <ImageButton
         android:id="@+id/btn_back"
@@ -17,7 +18,8 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
-        android:translationZ="1dp"/>
+        android:translationZ="1dp"
+        />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -55,37 +57,17 @@
                 android:text="Logan Kade (Fallen Crest High #5.5)"
                 android:textColor="@color/primary"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tv_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center"
-                android:text="Author"
-                android:textColor="@color/gray_100" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Số lượng còn lại: "
-                    android:textColor="@color/gray_100" />
-
-                <TextView
-                    android:id="@+id/tv_available"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="93"
-                    android:textColor="@color/gray_100" />
-            </LinearLayout>
+                android:text="Author"
+                android:textColor="@color/black_500"
+                android:textSize="16sp"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -95,20 +77,53 @@
                 android:text="Mô tả sách"
                 android:textColor="@color/primary"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tv_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:justificationMode="inter_word"
-
+                android:textAlignment="center"
                 android:lineSpacingMultiplier="1.3"
                 android:text="People think that just because they know my name, my reputation, and my family that they know me. They don't.They say I’m a manwhore, but who wouldn’t be with my face and body? They say I’m a partier, and that's not going to change. They say I'm a fighter"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                tools:ignore="UnusedAttribute" />
+                tools:ignore="UnusedAttribute"
+                android:layout_marginBottom="10dp"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="start"
+                android:text="Sách cùng thể loại"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints" >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcv_book_by_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="visible"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

@@ -1,28 +1,45 @@
 package com.example.library.activity
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Patterns
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.WindowInsetsControllerCompat
+import com.example.library.R
 import com.example.library.api.AuthApi
 import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityLoginBinding
 import com.example.library.model.Token
 import com.example.library.utils.AuthDBHelper
+import com.example.library.utils.Utils
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@SuppressLint("SetTextI18n")
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
+    private lateinit var dialogBox: Utils.DialogBox
     private lateinit var db : AuthDBHelper
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,10 +47,7 @@ class LoginActivity : AppCompatActivity() {
         validOnTextChange()
 
         db = AuthDBHelper(this@LoginActivity)
-//        binding.btnLogin.setOnClickListener {
-//            db.deleteToken2("UR")
-//            Log.e("delete", db.getToken().toString())
-//        }
+
         binding.btnLogin.setOnClickListener {
             if (validOnClickBtnLogin()) {
                 binding.progressBar.visibility = View.VISIBLE
@@ -46,11 +60,23 @@ class LoginActivity : AppCompatActivity() {
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
                             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-                            Toast.makeText(this@LoginActivity, errorResponse.errors[0], Toast.LENGTH_LONG).show()
+//                            Toast.makeText(this@LoginActivity, errorResponse.errors[0], Toast.LENGTH_LONG).show()
                             binding.progressBar.visibility = View.GONE
+
+                            dialogBox = Utils.DialogBox(this@LoginActivity)
+                            dialogBox.createDialog()
+                            dialogBox.dialog.setCancelable(true)
+                            dialogBox.tvTitle.text = "Có lỗi xảy ra!"
+                            dialogBox.tvContent.text = errorResponse.errors[0]
+
+                            dialogBox.btnAccept.setOnClickListener {
+                                dialogBox.dialog.dismiss()
+                            }
+
+                            dialogBox.dialog.show()
                         }
                         else {
-                            Handler().postDelayed(Runnable {
+                            Handler(Looper.myLooper()!!).postDelayed( {
                                 val result = response.body()
                                 if (result != null) {
                                     val token = Token(result.accessToken, result.refreshToken, result.role)
@@ -62,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
                                         finish()
                                     }
                                 }
-                            },2000)
+                            },1000)
                         }
                     }
 
@@ -78,15 +104,16 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        binding.tvRegister.setOnClickListener {
+        binding.btnRegister.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            Handler().postDelayed(Runnable {
+            Handler(Looper.myLooper()!!).postDelayed( {
                 val i = Intent(this, RegisterActivity::class.java)
                 startActivity(i)
                 finish()
-            },1000)
+            },500)
         }
     }
+
     private fun validOnClickBtnLogin(): Boolean {
         binding.layoutEdtEmail.error = validEmail()
         binding.layoutEdtPassword.error = validPassword()
@@ -94,12 +121,12 @@ class LoginActivity : AppCompatActivity() {
         return binding.layoutEdtEmail.error == null && binding.layoutEdtPassword.error == null
     }
     private fun validOnTextChange(){
-        binding.edtEmail.setOnFocusChangeListener { v, hasFocus ->
+        binding.edtEmail.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtEmail.error = validEmail()
         }
 
-        binding.edtPassword.setOnFocusChangeListener { v, hasFocus ->
+        binding.edtPassword.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtPassword.error = validPassword()
         }
