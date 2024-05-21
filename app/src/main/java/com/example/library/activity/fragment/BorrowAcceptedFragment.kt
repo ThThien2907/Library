@@ -61,7 +61,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
         val borrowReturnBookApi = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
 //        val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " + token.accessToken)
         val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " +
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc")
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEwIiwibmFtZSI6InRoaWVuIiwicm9sZSI6IlVSIiwiYmFuU3RhdHVzIjoiMCIsImV4cCI6MTcxNjM3NTUwOSwiaWF0IjoxNzE2Mjg5MTA5fQ.LXMH6s4tu74DFld6dibxnQ-yBmq2K63CbZGn6W-vfa0")
         data.enqueue(object : Callback<BorrowReturnBooks>{
             override fun onResponse(
                 call: Call<BorrowReturnBooks>,
@@ -74,6 +74,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
                             when(i.status){
                                 "1" -> listBorrowAccepted.add(i)
                                 "3" -> listBorrowAccepted.add(i)
+                                "4" -> listBorrowAccepted.add(i)
                             }
                         }
                         adapter.setData(listBorrowAccepted)

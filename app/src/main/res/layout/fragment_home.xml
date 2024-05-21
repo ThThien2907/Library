@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:background="@drawable/bg_white_stroke"
+                android:background="@drawable/bg_stroke_white"
                 app:boxBackgroundMode="none"
                 app:cursorColor="@color/white"
                 app:endIconCheckable="false"

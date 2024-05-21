@@ -33,6 +33,7 @@ data class BorrowReturnBook(
     @SerializedName("book_title"   ) var bookTitle   : String? = null,
     @SerializedName("status"       ) var status      : String? = null,
     @SerializedName("borrowed_day" ) var borrowedDay : String? = null,
+    @SerializedName("expiration_day" ) var expirationDay : String? = null,
     @SerializedName("returned_day" ) var returnedDay : String? = null
 )
 

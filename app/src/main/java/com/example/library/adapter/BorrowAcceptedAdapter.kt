@@ -2,6 +2,7 @@ package com.example.library.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ class BorrowAcceptedAdapter(val context: Context,
         return list.size
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onBindViewHolder(holder: BorrowAcceptedViewHolder, position: Int) {
         val data = list[position]
         holder.binding.tvTitle.text = "${data.bookTitle}"
@@ -40,28 +42,32 @@ class BorrowAcceptedAdapter(val context: Context,
                 holder.binding.tvStatus.text = "Đang mượn"
                 holder.binding.tvBorrowTime.text = "${data.borrowedDay}"
                 holder.binding.layoutReturnTime.visibility = View.GONE
-                holder.binding.layoutBorrowAgain.visibility = View.GONE
-                holder.binding.layoutBtnFun.visibility = View.VISIBLE
+                holder.binding.btnBorrowAgain.visibility = View.GONE
             }
             "3" -> {
                 holder.binding.tvStatus.text = "Đã trả"
                 holder.binding.tvBorrowTime.text = "${data.borrowedDay}"
                 holder.binding.tvReturnTime.text = "${data.returnedDay}"
-                holder.binding.layoutReturnTime.visibility = View.VISIBLE
-                holder.binding.layoutBorrowAgain.visibility = View.VISIBLE
-                holder.binding.layoutBtnFun.visibility = View.GONE
+                holder.binding.btnReadReturn.visibility = View.GONE
+            }
+            "4" -> {
+                holder.binding.tvStatus.text = "Quá hạn"
+                holder.binding.tvBorrowTime.text = "${data.borrowedDay}"
+                holder.binding.layoutReturnTime.visibility = View.GONE
+                holder.binding.btnBorrowAgain.visibility = View.GONE
+                holder.binding.container.background = context.resources.getDrawable(R.drawable.bg_white_stoke_red)
             }
         }
 
-        holder.binding.layoutReturnBook.setOnClickListener {
+        holder.binding.btnReturnBook.setOnClickListener {
             returnBookListener.onReturnBookClick(data)
         }
 
-        holder.binding.layoutReadBook.setOnClickListener {
+        holder.binding.btnReadBook.setOnClickListener {
             readBookListener.onReadBookClick(data.bookId!!)
         }
 
-        holder.binding.layoutBorrowAgain.setOnClickListener {
+        holder.binding.btnBorrowAgain.setOnClickListener {
             borrowAgainListener.onBorrowAgainClick(data.bookId!!)
         }
     }
