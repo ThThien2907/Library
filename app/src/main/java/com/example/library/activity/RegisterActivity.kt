@@ -35,7 +35,6 @@ import retrofit2.Response
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
-//    private lateinit var dialogBox: Utils.DialogBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -57,10 +56,6 @@ class RegisterActivity : AppCompatActivity() {
                 val data = authApi.register(name, email, password, confirmPassword)
                 data.enqueue(object : Callback<Token> {
                     override fun onResponse(call: Call<Token>, response: Response<Token>) {
-//                        dialogBox = Utils.DialogBox(this@RegisterActivity)
-//                        dialogBox.createDialog()
-//                        dialogBox.dialog.setCancelable(true)
-
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
                             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
@@ -68,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
                             Dialog.createDialog(this@RegisterActivity){
                                 dialog, tvTitle, tvContent, btnAccept, btnCancel ->
                                 dialog.setCancelable(true)
-                                tvTitle.text = "Có lỗi xảy ra!"
+                                tvTitle.text = "Lỗi đăng ký!"
                                 tvContent.text = errorResponse.errors[0]
 
                                 btnAccept.setOnClickListener {

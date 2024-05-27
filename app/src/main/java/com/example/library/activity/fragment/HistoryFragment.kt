@@ -17,8 +17,6 @@ import com.google.android.material.tabs.TabLayout
 @Suppress("DEPRECATION")
 class HistoryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnReloadListener {
     private lateinit var binding : FragmentHistoryBinding
-    private lateinit var db : AuthDBHelper
-
     private var borrowAcceptedFragment = BorrowAcceptedFragment(this)
     private var borrowPendingFragment = BorrowPendingFragment()
     private var borrowRejectedFragment = BorrowRejectedFragment()
@@ -40,8 +38,6 @@ class HistoryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRelo
         super.onViewCreated(view, savedInstanceState)
         //Ánh xạ view
         val tabLayout = binding.tabLayoutHistory
-
-        db = AuthDBHelper(requireContext())
 
         binding.swipeRefreshLayout.setOnRefreshListener(this@HistoryFragment)
 

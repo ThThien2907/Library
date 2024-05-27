@@ -23,7 +23,6 @@ class BorrowPendingFragment : Fragment() {
     private lateinit var binding: FragmentBorrowPendingBinding
     private lateinit var adapter: BorrowPendingAdapter
     private lateinit var listBorrowPending: ArrayList<BorrowReturnBook>
-    private lateinit var db: AuthDBHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,14 +36,10 @@ class BorrowPendingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        db = AuthDBHelper(requireContext())
-//
         initContent()
     }
 
     private fun initContent(){
-//        val token = db.getToken()
-
         adapter = BorrowPendingAdapter()
         binding.rcvBorrowPending.adapter = adapter
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL,false)
@@ -56,8 +51,6 @@ class BorrowPendingFragment : Fragment() {
             token ->
             val borrowReturnBookApi = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
             val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer ${token.accessToken}")
-//            val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " +
-//                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU2NzYwNDIsImlhdCI6MTcxNTU4NjA0M30.prrpsNdzJvtdMdTKYDTZi_8Eg10aR6vVcjtycJg8SUA")
             data.enqueue(object : Callback<BorrowReturnBooks> {
                 override fun onResponse(
                     call: Call<BorrowReturnBooks>,

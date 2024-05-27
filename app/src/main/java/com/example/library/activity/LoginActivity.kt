@@ -40,49 +40,17 @@ import java.util.*
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
-//    private lateinit var dialogBox: Utils.DialogBox
-    private lateinit var db : AuthDBHelper
     override fun onCreate(savedInstanceState: Bundle?) {
+
         enableEdgeToEdge()
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        val sharedPreferences = getSharedPreferences("token", MODE_PRIVATE)
-//        val e2 = sharedPreferences.getString("access_token", null)
-//        val e3 = sharedPreferences.getString("refresh_token", null)
-//
-//        Log.e("e2", e2.toString())
-//        Log.e("e3", e3.toString())
-
-//        binding.btnLogin.setOnClickListener {
-//            Dialog.createDialogDatePicker(this){
-//
-//            }
-////            val calendar = Calendar.getInstance()
-//////            var selectedDate = Calendar.getInstance()
-////            val datePickerDialog = DatePickerDialog(this, {DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-////                val selectedDate = Calendar.getInstance()
-////                selectedDate.set(year, monthOfYear, dayOfMonth)
-////                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-////                val formatDate = dateFormat.format(selectedDate.time)
-//////                btnSelectDate.text = formatDate
-////                Log.e("date", selectedDate.time.toString())
-////                Log.e("date", formatDate)
-////            },
-////                calendar.get(Calendar.YEAR),
-////                calendar.get(Calendar.MONTH),
-////                calendar.get(Calendar.DAY_OF_MONTH)
-////            )
-////            datePickerDialog.show()
-//        }
-
-
         validOnTextChange()
-//
-//        db = AuthDBHelper(this@LoginActivity)
-//
+
         binding.btnLogin.setOnClickListener {
             if (validOnClickBtnLogin()) {
                 binding.progressBar.visibility = View.VISIBLE
@@ -94,36 +62,21 @@ class LoginActivity : AppCompatActivity() {
                     override fun onResponse(call: Call<Token>, response: Response<Token>) {
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
-                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-//                            Toast.makeText(this@LoginActivity, errorResponse.errors[0], Toast.LENGTH_LONG).show()
+                            val errorResponse =
+                                Gson().fromJson(errorBody, ErrorResponse::class.java)
                             binding.progressBar.visibility = View.GONE
-                            Dialog.createDialog(this@LoginActivity){
-                                dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                            Dialog.createDialog(this@LoginActivity) { dialog, tvTitle, tvContent, btnAccept, btnCancel ->
                                 dialog.setCancelable(true)
 
-                                tvTitle.text = "Lỗi đăng nhập"
+                                tvTitle.text = "Lỗi đăng nhập!"
                                 tvContent.text = errorResponse.errors[0]
                                 btnAccept.setOnClickListener {
                                     dialog.dismiss()
                                 }
-
                                 dialog.show()
                             }
-
-//                            dialogBox = Utils.DialogBox(this@LoginActivity)
-//                            dialogBox.createDialog()
-//                            dialogBox.dialog.setCancelable(true)
-//                            dialogBox.tvTitle.text = "Lỗi đăng nhập"
-//                            dialogBox.tvContent.text = errorResponse.errors[0]
-//
-//                            dialogBox.btnAccept.setOnClickListener {
-//                                dialogBox.dialog.dismiss()
-//                            }
-//
-//                            dialogBox.dialog.show()
-                        }
-                        else {
-                            Handler(Looper.myLooper()!!).postDelayed( {
+                        } else {
+                            Handler(Looper.myLooper()!!).postDelayed({
                                 val result = response.body()
                                 if (result != null) {
                                     val token = Token(
@@ -134,22 +87,12 @@ class LoginActivity : AppCompatActivity() {
                                         result.expirationRefreshTokenTime
                                     )
                                     AuthToken.storeToken(this@LoginActivity, token)
-                                    Log.e("login", AuthToken.getToken(this@LoginActivity).toString())
-//                                    val rs = db.addNewToken(token)
-//                                    if (rs >= 1){
-//                                    sharedPreferences.edit().apply {
-//                                        putString("access_token", result.accessToken)
-//                                        putString("refresh_token", result.refreshToken)
-//                                        putString("role", result.role)
-//                                        putLong("expirationAccessTokenTime", result.expirationAccessTokenTime!!)
-//                                        putLong("expirationRefreshTokenTime", result.expirationRefreshTokenTime!!)
-//                                    }.apply()
-                                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-//                                    }
+                                    val intent =
+                                        Intent(this@LoginActivity, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
                                 }
-                            },1000)
+                            }, 1000)
                         }
                     }
 
@@ -167,11 +110,11 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnRegister.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            Handler(Looper.myLooper()!!).postDelayed( {
+            Handler(Looper.myLooper()!!).postDelayed({
                 val i = Intent(this, RegisterActivity::class.java)
                 startActivity(i)
                 finish()
-            },500)
+            }, 500)
         }
     }
 
@@ -181,7 +124,8 @@ class LoginActivity : AppCompatActivity() {
 
         return binding.layoutEdtEmail.error == null && binding.layoutEdtPassword.error == null
     }
-    private fun validOnTextChange(){
+
+    private fun validOnTextChange() {
         binding.edtEmail.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus)
                 binding.layoutEdtEmail.error = validEmail()

@@ -31,7 +31,6 @@ import retrofit2.Response
 
 class AccountFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding: FragmentAccountBinding
-    private lateinit var db : AuthDBHelper
     private var userApi = RetrofitService.getInstance().create(UserApi::class.java)
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
 
@@ -46,25 +45,12 @@ class AccountFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        db = AuthDBHelper(requireContext())
-//        val token = db.getToken()
-
-//        val sharedPreferences = activity?.getSharedPreferences("token", Context.MODE_PRIVATE)
-//        val accessToken = sharedPreferences?.getString("access_token", null)
-//        val refreshToken = sharedPreferences?.getString("refresh_token", null)
-        Log.e("acc", AuthToken.getToken(requireActivity()).toString())
-
 
         initProfile()
         binding.swipeRefreshLayout.setOnRefreshListener(this)
 
         binding.btnAccount.setOnClickListener {
 //            Toast.makeText(requireContext(),"Đang phát triển thêm", Toast.LENGTH_SHORT).show()
-            AuthToken.refreshToken(requireActivity()){
-                token ->
-                Log.e("token", token.toString())
-
-            }
         }
 
         binding.btnContact.setOnClickListener {

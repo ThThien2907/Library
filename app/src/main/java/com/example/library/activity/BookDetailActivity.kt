@@ -37,7 +37,6 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
     private lateinit var binding: ActivityBookDetailBinding
     private lateinit var adapter: BookAdapterRcv
     private lateinit var listBook: ArrayList<Book>
-    private lateinit var db: AuthDBHelper
     private var bookState : Int = 2
     private val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
     private val bookApi = RetrofitService.getInstance().create(BookApi::class.java)
@@ -46,8 +45,6 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityBookDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        db = AuthDBHelper(this)
 
         var bookSelected = Book()
         val intent = intent
@@ -112,7 +109,6 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
         startActivity(intent)
     }
     private fun borrowBook(bookID: String){
-//        val token = db.getToken()
         Dialog.createDialogDatePicker(this){
             expirationTimestamp ->
             AuthToken.refreshToken(this){
@@ -143,12 +139,8 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
     private fun returnBook(bookID: String) {
         AuthToken.refreshToken(this){
                 token ->
-//            val token = db.getToken()
             val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
             val data = brb.returnBook("Bearer ${token.accessToken}", bookID.toInt())
-//            val data = brb.returnBook("Bearer " +
-//                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc"
-//                , borrowReturnBook.id!!.toInt())
             data.enqueue(object : Callback<BorrowReturnBooks>{
                 override fun onResponse(
                     call: Call<BorrowReturnBooks>,
@@ -192,11 +184,9 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
         }
     }
     private fun checkBorrowState(bookID: String){
-//        val token = db.getToken()
         AuthToken.refreshToken(this){
             token ->
             val data = brb.getMyBorrowReturnBook("Bearer ${token.accessToken}")
-//        val data = brb.getMyBorrowReturnBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEwIiwibmFtZSI6InRoaWVuIiwicm9sZSI6IlVSIiwiYmFuU3RhdHVzIjoiMCIsImV4cCI6MTcxNjM3NTUwOSwiaWF0IjoxNzE2Mjg5MTA5fQ.LXMH6s4tu74DFld6dibxnQ-yBmq2K63CbZGn6W-vfa0")
             data.enqueue(object : Callback<BorrowReturnBooks>{
                 override fun onResponse(
                     call: Call<BorrowReturnBooks>,

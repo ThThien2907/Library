@@ -22,7 +22,6 @@ class BorrowRejectedFragment : Fragment() {
     private lateinit var binding: FragmentBorrowRejectedBinding
     private lateinit var adapter: BorrowRejectedAdapter
     private lateinit var listBorrowRejected: ArrayList<BorrowReturnBook>
-    private lateinit var db : AuthDBHelper
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -35,14 +34,10 @@ class BorrowRejectedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        db = AuthDBHelper(requireContext())
-
         initContent()
     }
 
     private fun initContent(){
-//        val token = db.getToken()
-
         adapter = BorrowRejectedAdapter()
         binding.rcvBorrowRejected.adapter = adapter
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL,false)
@@ -54,8 +49,6 @@ class BorrowRejectedFragment : Fragment() {
             token ->
             val borrowReturnBookApi = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
         val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer ${token.accessToken}")
-//            val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " +
-//                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU2NzYwNDIsImlhdCI6MTcxNTU4NjA0M30.prrpsNdzJvtdMdTKYDTZi_8Eg10aR6vVcjtycJg8SUA")
             data.enqueue(object : Callback<BorrowReturnBooks> {
                 override fun onResponse(
                     call: Call<BorrowReturnBooks>,

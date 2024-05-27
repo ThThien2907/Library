@@ -31,7 +31,6 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
     private lateinit var binding: FragmentBorrowAcceptedBinding
     private lateinit var adapter: BorrowAcceptedAdapter
     private lateinit var listBorrowAccepted: ArrayList<BorrowReturnBook>
-    private lateinit var db: AuthDBHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,8 +43,6 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        db = AuthDBHelper(requireContext())
 
         initContent()
     }
@@ -60,11 +57,8 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
 
         AuthToken.refreshToken(requireActivity()){
             token ->
-//            val token = db.getToken()
             val borrowReturnBookApi = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
             val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer ${token.accessToken}")
-//        val data = borrowReturnBookApi.getMyBorrowReturnBook("Bearer " +
-//                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEwIiwibmFtZSI6InRoaWVuIiwicm9sZSI6IlVSIiwiYmFuU3RhdHVzIjoiMCIsImV4cCI6MTcxNjM3NTUwOSwiaWF0IjoxNzE2Mjg5MTA5fQ.LXMH6s4tu74DFld6dibxnQ-yBmq2K63CbZGn6W-vfa0")
             data.enqueue(object : Callback<BorrowReturnBooks>{
                 override fun onResponse(
                     call: Call<BorrowReturnBooks>,
@@ -104,12 +98,8 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
     override fun onReturnBookClick(borrowReturnBook: BorrowReturnBook) {
         AuthToken.refreshToken(requireActivity()){
             token ->
-//            val token = db.getToken()
             val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
             val data = brb.returnBook("Bearer ${token.accessToken}", borrowReturnBook.id!!.toInt())
-//            val data = brb.returnBook("Bearer " +
-//                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc"
-//                , borrowReturnBook.id!!.toInt())
             data.enqueue(object : Callback<BorrowReturnBooks>{
                 override fun onResponse(
                     call: Call<BorrowReturnBooks>,
@@ -165,10 +155,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
                     token ->
                 val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
 
-//            val token = db.getToken()
                 val data = brb.borrowBook("Bearer ${token.accessToken}", bookID.toInt(), expirationTimestamp)
-//            val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc",
-//                bookID.toInt(), 0)
                 data.enqueue(object : Callback<BorrowReturnBooks>{
                     override fun onResponse(
                         call: Call<BorrowReturnBooks>,

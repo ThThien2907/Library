@@ -27,32 +27,12 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        replaceFragment(homeFragment)
         supportFragmentManager.beginTransaction().apply {
             add(R.id.content_frame, homeFragment)
             add(R.id.content_frame, historyFragment).hide(historyFragment)
             add(R.id.content_frame, accountFragment).hide(accountFragment)
         }.commit()
 
-//        binding.bottomNav.setOnNavigationItemSelectedListener {menuItem ->
-//            when (menuItem.itemId){
-//                R.id.mnu_home -> {
-//                    replaceFragment(homeFragment)
-//                    true
-//                }
-//                R.id.mnu_history -> {
-//                    replaceFragment(historyFragment)
-//                    true
-//                }
-//                R.id.mnu_account -> {
-//                    replaceFragment(accountFragment)
-//                    true
-//                }
-//                else -> {
-//                    false
-//                }
-//            }
-//        }
         val bottomNavigation = findViewById<CurvedBottomNavigation>(R.id.bottom_nav)
         bottomNavigation.add(CurvedBottomNavigation.Model(1,"Trang chủ", R.drawable.ic_home))
         bottomNavigation.add(CurvedBottomNavigation.Model(2, "Lịch sử",R.drawable.ic_history))

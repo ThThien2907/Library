@@ -24,15 +24,14 @@ import retrofit2.Response
 
 @SuppressLint("CustomSplashScreen, SetTextI18n")
 class SplashActivity : AppCompatActivity() {
-    private lateinit var db: AuthDBHelper
-//    private lateinit var dialogBox: Utils.DialogBox
     override fun onCreate(savedInstanceState: Bundle?) {
+
         enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-//        AuthToken.storeToken(this, Token())
+
         val token = AuthToken.getToken(this)
-        Log.e("spl", token.toString())
 
         if (!Utils.isOnline(this)){
             Dialog.createDialog(this){
@@ -56,63 +55,6 @@ class SplashActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     }
-//                    val authApi = RetrofitService.getInstance().create(AuthApi::class.java)
-//                    val data = authApi.refreshToken("Bearer ${token.refreshToken}")
-//                    data.enqueue(object : Callback<Token> {
-//                        override fun onResponse(call: Call<Token>, response: Response<Token>) {
-//                            if (response.isSuccessful) {
-//                                val result = response.body()
-//                                if (result != null) {
-//                                    val newToken = Token(
-//                                        result.accessToken,
-//                                        result.refreshToken,
-//                                        result.role,
-//                                        result.expirationAccessTokenTime,
-//                                        result.expirationRefreshTokenTime
-//                                    )
-//                                    AuthToken.storeToken(this@SplashActivity, newToken)
-//
-////                                    sharedPreferences.edit().apply {
-////                                        putString("access_token", result.accessToken)
-////                                        putString("refresh_token", result.refreshToken)
-////                                        putString("role", result.role)
-////                                        putLong("expirationAccessTokenTime", result.expirationAccessTokenTime!!)
-////                                        putLong("expirationRefreshTokenTime", result.expirationRefreshTokenTime!!)
-////                                    }.apply()
-////                                    val rs = db.updateToken(newToken, token.refreshToken!!)
-////                                    if (rs > 0) {
-//                                        val intent =
-//                                            Intent(this@SplashActivity, MainActivity::class.java)
-//                                        startActivity(intent)
-//                                        finish()
-////                                    }
-//                                }
-//                            }
-//                            else {
-//                                val errorBody = response.errorBody()?.string()
-//                                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-////
-////                                if (errorResponse.errors[0] == "refresh_token này không tồn tại trong db (bạn chưa đăng nhập)"){
-////                                    dialogBox.tvTitle.text = "Thông báo"
-////                                    dialogBox.tvContent.text = "Hết phiên đăng nhập. Vui lòng đăng nhập lại."
-////
-////                                    dialogBox.btnAccept.setOnClickListener {
-////                                        dialogBox.dialog.dismiss()
-//////                                        val rs = db.deleteAll()
-//////                                        if (rs > 0){
-////                                            val intent = Intent(this@SplashActivity, LoginActivity::class.java)
-////                                            startActivity(intent)
-////                                            finish()
-//////                                        }
-////                                    }
-////                                    dialogBox.dialog.show()
-////                                }
-//                            }
-//                        }
-//
-//                        override fun onFailure(call: Call<Token>, t: Throwable) {
-//                        }
-//                    })
                 } else {
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
