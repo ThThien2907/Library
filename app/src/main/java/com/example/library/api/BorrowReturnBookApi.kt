@@ -14,5 +14,7 @@ interface BorrowReturnBookApi {
 
     @FormUrlEncoded
     @POST("borrow_return_books/create_borrow_book.php")
-    fun borrowBook(@Header("Authorization") authorization: String, @Field("book_id") book_id: Int): Call<BorrowReturnBooks>
+    fun borrowBook(@Header("Authorization") authorization: String,
+                   @Field("book_id") book_id: Int,
+                   @Field("expiration_day") expiration_day: Int): Call<BorrowReturnBooks>
 }

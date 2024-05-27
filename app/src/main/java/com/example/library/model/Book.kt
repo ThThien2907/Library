@@ -21,20 +21,20 @@ data class Books(
 )
 
 data class BookByID(
-    @SerializedName("message"    ) var message: String? = null,
-    @SerializedName("data"       ) var data: Book? = Book()
+    @SerializedName("message"    ) var message : String? = null,
+    @SerializedName("data"       ) var data    : Book? = Book()
 )
 
 data class BorrowReturnBook(
-    @SerializedName("id"           ) var id          : String? = null,
-    @SerializedName("user_id"      ) var userId      : String? = null,
-    @SerializedName("user_name"    ) var userName    : String? = null,
-    @SerializedName("book_id"      ) var bookId      : String? = null,
-    @SerializedName("book_title"   ) var bookTitle   : String? = null,
-    @SerializedName("status"       ) var status      : String? = null,
-    @SerializedName("borrowed_day" ) var borrowedDay : String? = null,
-    @SerializedName("expiration_day" ) var expirationDay : String? = null,
-    @SerializedName("returned_day" ) var returnedDay : String? = null
+    @SerializedName("id"            ) var id            : String? = null,
+    @SerializedName("user_id"       ) var userId        : String? = null,
+    @SerializedName("user_name"     ) var userName      : String? = null,
+    @SerializedName("book_id"       ) var bookId        : String? = null,
+    @SerializedName("book_title"    ) var bookTitle     : String? = null,
+    @SerializedName("status"        ) var status        : String? = null,
+    @SerializedName("borrowed_day"  ) var borrowedDay   : String? = null,
+    @SerializedName("expiration_day") var expirationDay : String? = null,
+    @SerializedName("returned_day"  ) var returnedDay   : String? = null
 )
 
 data class BorrowReturnBooks(

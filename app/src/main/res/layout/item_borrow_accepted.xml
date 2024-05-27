@@ -55,41 +55,65 @@
                     android:id="@+id/layout_borrow_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ngày mượn:"
-                        android:textColor="@color/gray_100" />
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:id="@+id/tv_borrow_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="27dp"
                         android:text="2024-03-17 15:05:40"
                         android:textColor="@color/gray_100" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_expiration_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ngày hẹn trả:"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/tv_expiration_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="2024-03-17 15:05:40"
+                        android:textColor="@color/gray_100"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/layout_return_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ngày trả:"
-                        android:textColor="@color/gray_100" />
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:id="@+id/tv_return_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="25dp"
+                        android:layout_marginStart="47dp"
                         android:text="2024-03-17 15:05:40"
                         android:textColor="@color/gray_100" />
                 </LinearLayout>
@@ -133,7 +157,9 @@
                         android:orientation="horizontal"
                         android:paddingVertical="10dp"
                         android:paddingHorizontal="5dp"
-                        android:background="@drawable/ripple_effect_transparent_bg">
+                        android:background="@drawable/ripple_effect_transparent_bg"
+                        android:visibility="visible"
+                        android:layout_marginEnd="50dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -155,7 +181,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginStart="50dp"
                         android:background="@drawable/ripple_effect_transparent_bg"
                         android:paddingVertical="10dp"
                         android:paddingHorizontal="5dp">

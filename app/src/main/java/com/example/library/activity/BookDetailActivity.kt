@@ -15,6 +15,7 @@ import com.example.library.R
 import com.example.library.adapter.BookAdapterRcv
 import com.example.library.api.BookApi
 import com.example.library.api.BorrowReturnBookApi
+import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityBookDetailBinding
 import com.example.library.model.Book
@@ -22,7 +23,10 @@ import com.example.library.model.Books
 import com.example.library.model.BorrowReturnBook
 import com.example.library.model.BorrowReturnBooks
 import com.example.library.utils.AuthDBHelper
+import com.example.library.utils.AuthToken
+import com.example.library.utils.Dialog
 import com.example.library.utils.OnItemBookClickListener
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,10 +59,11 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
         }
 
         binding.btnBorrowBook.setOnClickListener {
-            if (bookState == 1)
-                readBook()
-            else
-                borrowBook(bookSelected.id!!)
+            when (bookState) {
+                1 -> readBook()
+                2 -> borrowBook(bookSelected.id!!)
+                4 -> returnBook(bookSelected.id!!)
+            }
         }
 
         binding.btnBack.setOnClickListener {
@@ -107,74 +112,139 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
         startActivity(intent)
     }
     private fun borrowBook(bookID: String){
-        val token = db.getToken()
-//            val data = brb.borrowBook("Bearer " + token.accessToken, bookID)
-        val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc",
-            bookID.toInt())
-        data.enqueue(object : Callback<BorrowReturnBooks>{
-            override fun onResponse(
-                call: Call<BorrowReturnBooks>,
-                response: Response<BorrowReturnBooks>,
-            ) {
-                if (response.isSuccessful){
-                    Toast.makeText(this@BookDetailActivity, response.body()!!.message, Toast.LENGTH_SHORT).show()
-                    binding.btnBorrowBook.text = "Chờ duyệt"
-                    binding.btnBorrowBook.isEnabled = false
-                }
-                else
-                    Toast.makeText(this@BookDetailActivity, "Co loi ", Toast.LENGTH_SHORT).show()
-            }
+//        val token = db.getToken()
+        Dialog.createDialogDatePicker(this){
+            expirationTimestamp ->
+            AuthToken.refreshToken(this){
+                    token ->
+                val data = brb.borrowBook("Bearer ${token.accessToken}", bookID.toInt(), expirationTimestamp)
+                data.enqueue(object : Callback<BorrowReturnBooks>{
+                    override fun onResponse(
+                        call: Call<BorrowReturnBooks>,
+                        response: Response<BorrowReturnBooks>,
+                    ) {
+                        if (response.isSuccessful){
+                            Toast.makeText(this@BookDetailActivity, response.body()!!.message, Toast.LENGTH_SHORT).show()
+                            binding.btnBorrowBook.text = "Chờ duyệt"
+                            binding.btnBorrowBook.isEnabled = false
+                        }
+                        else
+                            Toast.makeText(this@BookDetailActivity, "Co loi ", Toast.LENGTH_SHORT).show()
+                    }
 
-            override fun onFailure(call: Call<BorrowReturnBooks>, t: Throwable) {
+                    override fun onFailure(call: Call<BorrowReturnBooks>, t: Throwable) {
+                    }
+                })
             }
-        })
+        }
+
     }
 
+    private fun returnBook(bookID: String) {
+        AuthToken.refreshToken(this){
+                token ->
+//            val token = db.getToken()
+            val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
+            val data = brb.returnBook("Bearer ${token.accessToken}", bookID.toInt())
+//            val data = brb.returnBook("Bearer " +
+//                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc"
+//                , borrowReturnBook.id!!.toInt())
+            data.enqueue(object : Callback<BorrowReturnBooks>{
+                override fun onResponse(
+                    call: Call<BorrowReturnBooks>,
+                    response: Response<BorrowReturnBooks>,
+                ) {
+                    if (response.isSuccessful){
+                        Dialog.createDialog(this@BookDetailActivity){
+                                dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                            dialog.setCancelable(false)
+                            tvTitle.text = "Thông báo"
+                            tvContent.text = "Trả sách thành công."
+                            btnAccept.setOnClickListener {
+                                dialog.dismiss()
+                                bookState = 2
+                                binding.btnBorrowBook.text = "Mượn sách"
+                            }
+                            dialog.show()
+                        }
+                    }
+                    else if (response.code() == 409){
+                        val errorBody = response.errorBody()?.string()
+                        val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                        Dialog.createDialog(this@BookDetailActivity){
+                                dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                            dialog.setCancelable(true)
+                            tvTitle.text = "Thông báo"
+                            tvContent.text = errorResponse.errors[0]
+                            btnAccept.setOnClickListener {
+                                dialog.dismiss()
+                            }
+                            dialog.show()
+                        }
+                    }
+                    else
+                        Dialog.createDialogLoginSessionExpired(this@BookDetailActivity)
+                }
+
+                override fun onFailure(call: Call<BorrowReturnBooks>, t: Throwable) {
+                }
+            })
+        }
+    }
     private fun checkBorrowState(bookID: String){
-        val token = db.getToken()
-//        val data = brb.getMyBorrowReturnBook("Bearer " + token.accessToken)
-        val data = brb.getMyBorrowReturnBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc")
-        data.enqueue(object : Callback<BorrowReturnBooks>{
-            override fun onResponse(
-                call: Call<BorrowReturnBooks>,
-                response: Response<BorrowReturnBooks>,
-            ) {
-                if (response.isSuccessful){
-                    val result = response.body()
-                    if (result != null){
-                        val listData : ArrayList<BorrowReturnBook> = result.data
-                        for (i in listData){
-                            if (i.bookId == bookID){
-                                when(i.status){
-                                    "0" -> bookState = 0
-                                    "1" -> bookState = 1
+//        val token = db.getToken()
+        AuthToken.refreshToken(this){
+            token ->
+            val data = brb.getMyBorrowReturnBook("Bearer ${token.accessToken}")
+//        val data = brb.getMyBorrowReturnBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEwIiwibmFtZSI6InRoaWVuIiwicm9sZSI6IlVSIiwiYmFuU3RhdHVzIjoiMCIsImV4cCI6MTcxNjM3NTUwOSwiaWF0IjoxNzE2Mjg5MTA5fQ.LXMH6s4tu74DFld6dibxnQ-yBmq2K63CbZGn6W-vfa0")
+            data.enqueue(object : Callback<BorrowReturnBooks>{
+                override fun onResponse(
+                    call: Call<BorrowReturnBooks>,
+                    response: Response<BorrowReturnBooks>,
+                ) {
+                    if (response.isSuccessful){
+                        val result = response.body()
+                        if (result != null){
+                            val listData : ArrayList<BorrowReturnBook> = result.data
+                            for (i in listData){
+                                if (i.bookId == bookID){
+                                    when(i.status){
+                                        "0" -> bookState = 0
+                                        "1" -> bookState = 1
+                                        "4" -> bookState = 4
+                                    }
                                 }
                             }
-                        }
-                        when(bookState){
-                            0 -> {
-                                binding.btnBorrowBook.text = "Chờ duyệt"
-                                binding.btnBorrowBook.isEnabled = false
-                            }
-                            1 -> {
-                                binding.btnBorrowBook.text = "Đọc sách"
-                                binding.btnBorrowBook.isEnabled = true
-                            }
-                            2 -> {
-                                binding.btnBorrowBook.text = "Mượn sách"
-                                binding.btnBorrowBook.isEnabled = true
-                            }
-                        }
-                        binding.btnBorrowBook.visibility = View.VISIBLE
-                    }
-                }
-                else
-                    Toast.makeText(this@BookDetailActivity, "Co loi ", Toast.LENGTH_SHORT).show()
-            }
 
-            override fun onFailure(call: Call<BorrowReturnBooks>, t: Throwable) {
-            }
-        })
+                            when(bookState){
+                                0 -> {
+                                    binding.btnBorrowBook.text = "Chờ duyệt"
+                                    binding.btnBorrowBook.isEnabled = false
+                                }
+                                1 -> {
+                                    binding.btnBorrowBook.text = "Đọc sách"
+                                    binding.btnBorrowBook.isEnabled = true
+                                }
+                                4 -> {
+                                    binding.btnBorrowBook.text = "Trả sách"
+                                    binding.btnBorrowBook.isEnabled = true
+                                }
+                                2 -> {
+                                    binding.btnBorrowBook.text = "Mượn sách"
+                                    binding.btnBorrowBook.isEnabled = true
+                                }
+                            }
+                            binding.btnBorrowBook.visibility = View.VISIBLE
+                        }
+                    }
+                    else
+                        Dialog.createDialogLoginSessionExpired(this@BookDetailActivity)
+                }
+
+                override fun onFailure(call: Call<BorrowReturnBooks>, t: Throwable) {
+                }
+            })
+        }
     }
 
     override fun onItemBookClick(book: Book) {

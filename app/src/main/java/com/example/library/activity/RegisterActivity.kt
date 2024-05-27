@@ -1,7 +1,6 @@
 package com.example.library.activity
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -25,6 +24,7 @@ import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityRegisterBinding
 import com.example.library.model.Token
+import com.example.library.utils.Dialog
 import com.example.library.utils.Utils
 import com.google.gson.Gson
 import retrofit2.Call
@@ -35,7 +35,7 @@ import retrofit2.Response
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
-    private lateinit var dialogBox: Utils.DialogBox
+//    private lateinit var dialogBox: Utils.DialogBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -57,35 +57,42 @@ class RegisterActivity : AppCompatActivity() {
                 val data = authApi.register(name, email, password, confirmPassword)
                 data.enqueue(object : Callback<Token> {
                     override fun onResponse(call: Call<Token>, response: Response<Token>) {
-                        dialogBox = Utils.DialogBox(this@RegisterActivity)
-                        dialogBox.createDialog()
-                        dialogBox.dialog.setCancelable(true)
+//                        dialogBox = Utils.DialogBox(this@RegisterActivity)
+//                        dialogBox.createDialog()
+//                        dialogBox.dialog.setCancelable(true)
 
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
                             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
                             binding.progressBar.visibility = View.GONE
+                            Dialog.createDialog(this@RegisterActivity){
+                                dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                                dialog.setCancelable(true)
+                                tvTitle.text = "Có lỗi xảy ra!"
+                                tvContent.text = errorResponse.errors[0]
 
-                            dialogBox.tvTitle.text = "Có lỗi xảy ra!"
-                            dialogBox.tvContent.text = errorResponse.errors[0]
-                            dialogBox.dialog.show()
-
-                            dialogBox.btnAccept.setOnClickListener {
-                                dialogBox.dialog.dismiss()
+                                btnAccept.setOnClickListener {
+                                    dialog.dismiss()
+                                }
+                                dialog.show()
                             }
                         }
                         else {
                             Handler(Looper.myLooper()!!).postDelayed( {
-                                val intent =
-                                    Intent(this@RegisterActivity, LoginActivity::class.java)
-                                dialogBox.tvTitle.text = "Thành công!"
-                                dialogBox.tvContent.text = "Đăng ký tài khoản thành công. Mời bạn đăng nhập."
-                                dialogBox.dialog.show()
+                                val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                                Dialog.createDialog(this@RegisterActivity){
+                                    dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                                    tvTitle.text = "Thành công!"
+                                    tvContent.text = "Đăng ký tài khoản thành công. Mời bạn đăng nhập."
 
-                                dialogBox.btnAccept.setOnClickListener {
-                                    startActivity(intent)
-                                    finish()
+                                    btnAccept.setOnClickListener {
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    dialog.show()
+
                                 }
+
                             },500)
                         }
                     }

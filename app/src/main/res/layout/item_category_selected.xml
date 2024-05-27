@@ -34,5 +34,6 @@
         android:drawableEnd="@drawable/ic_drop_down_36"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:drawableTint="@color/primary"/>
+        android:drawableTint="@color/primary"
+        android:translationZ="1dp"/>
 </RelativeLayout>

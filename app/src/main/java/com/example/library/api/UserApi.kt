@@ -7,5 +7,5 @@ import retrofit2.http.Header
 
 interface UserApi {
     @GET("user/get_my_profile.php")
-    fun getMyProfile(@Header("Authorization") authorization: String) : Call<Users>
+    fun getMyProfile(@Header("Authorization") accessToken: String) : Call<Users>
 }
