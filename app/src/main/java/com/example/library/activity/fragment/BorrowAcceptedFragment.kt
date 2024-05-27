@@ -80,6 +80,9 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
                                     "4" -> listBorrowAccepted.add(i)
                                 }
                             }
+                            val customOrder = listOf("4", "1", "3")
+                            listBorrowAccepted.sortBy { customOrder.indexOf(it.status) }
+
                             adapter.setData(listBorrowAccepted)
                             if (listBorrowAccepted.size > 0)
                                 binding.tvNotification.visibility = View.GONE
@@ -163,7 +166,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
                 val brb = RetrofitService.getInstance().create(BorrowReturnBookApi::class.java)
 
 //            val token = db.getToken()
-                val data = brb.borrowBook("Bearer ${token.accessToken}", bookID.toInt(),0)
+                val data = brb.borrowBook("Bearer ${token.accessToken}", bookID.toInt(), expirationTimestamp)
 //            val data = brb.borrowBook("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjciLCJuYW1lIjoidXNlcjEiLCJyb2xlIjoiVVIiLCJleHAiOjE3MTU3Nzk5ODAsImlhdCI6MTcxNTY4OTk4MH0.uY5oBcLPYOMLDCrnlL77b-6JApNn2h16n3YT2y-TSgc",
 //                bookID.toInt(), 0)
                 data.enqueue(object : Callback<BorrowReturnBooks>{

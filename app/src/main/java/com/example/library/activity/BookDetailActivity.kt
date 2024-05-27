@@ -225,16 +225,17 @@ class BookDetailActivity : AppCompatActivity(), OnItemBookClickListener {
                                     binding.btnBorrowBook.text = "Đọc sách"
                                     binding.btnBorrowBook.isEnabled = true
                                 }
-                                4 -> {
-                                    binding.btnBorrowBook.text = "Trả sách"
-                                    binding.btnBorrowBook.isEnabled = true
-                                }
+//                                4 -> {
+//                                    binding.btnBorrowBook.text = "Trả sách"
+//                                    binding.btnBorrowBook.isEnabled = true
+//                                }
                                 2 -> {
                                     binding.btnBorrowBook.text = "Mượn sách"
                                     binding.btnBorrowBook.isEnabled = true
                                 }
                             }
-                            binding.btnBorrowBook.visibility = View.VISIBLE
+                            if (bookState != 4)
+                                binding.btnBorrowBook.visibility = View.VISIBLE
                         }
                     }
                     else
