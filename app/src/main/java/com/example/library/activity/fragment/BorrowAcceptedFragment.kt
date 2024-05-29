@@ -17,7 +17,6 @@ import com.example.library.api.BorrowReturnBookApi
 import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.FragmentBorrowAcceptedBinding
-import com.example.library.model.Book
 import com.example.library.model.BookByID
 import com.example.library.model.BorrowReturnBook
 import com.example.library.model.BorrowReturnBooks
@@ -107,6 +106,7 @@ class BorrowAcceptedFragment(private val listener: OnReloadListener) :
                     }
                     //không có phiếu mượn nào
                     else if (response.code() == 404){
+                        binding.progressBar.visibility = View.GONE
                         binding.tvNotification.visibility = View.VISIBLE
                     }
                     else {

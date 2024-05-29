@@ -88,6 +88,7 @@ class BorrowPendingFragment : Fragment(), OnItemClickListener {
                     }
                     //không có phiếu mượn nào
                     else if (response.code() == 404){
+                        binding.progressBar.visibility = View.GONE
                         binding.tvNotification.visibility = View.VISIBLE
                     }
                     else {

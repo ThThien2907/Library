@@ -11,14 +11,12 @@ import com.example.library.activity.BookDetailActivity
 import com.example.library.adapter.BorrowRejectedAdapter
 import com.example.library.api.BookApi
 import com.example.library.api.BorrowReturnBookApi
-import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.FragmentBorrowRejectedBinding
 import com.example.library.model.BookByID
 import com.example.library.model.BorrowReturnBook
 import com.example.library.model.BorrowReturnBooks
 import com.example.library.utils.*
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -86,6 +84,7 @@ class BorrowRejectedFragment : Fragment(), OnItemClickListener {
                     }
                     //không có phiếu mượn nào
                     else if (response.code() == 404){
+                        binding.progressBar.visibility = View.GONE
                         binding.tvNotification.visibility = View.VISIBLE
                     }
                 }
