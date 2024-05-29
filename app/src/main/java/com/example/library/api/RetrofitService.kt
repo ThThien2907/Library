@@ -9,12 +9,9 @@ object RetrofitService {
     private val gson: Gson
         get() = GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
 
-    //http://localhost/CT06/do_an/api/routes/book/get_books.php?limit=2&page=1
-
     fun getInstance(): Retrofit {
         return Retrofit.Builder()
-                //10.0.68.231
-                //192.168.188.3
+                //truyền vô địa chỉ ip của máy chủ
             .baseUrl("http://10.0.68.231/CT06/do_an/api/routes/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

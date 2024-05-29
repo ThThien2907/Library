@@ -9,16 +9,16 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.example.library.R
-import com.example.library.activity.LoginActivity
+import com.example.library.activity.MainActivity
 import com.example.library.model.Token
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("SetTextI18n")
 object Dialog {
     fun createDialog(context: Context,
                      onCreateDialog:(dialog: Dialog,
@@ -44,7 +44,7 @@ object Dialog {
 
     fun createDialogLoginSessionExpired(activity: Activity){
         createDialog(activity){
-                dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                dialog, tvTitle, tvContent, btnAccept, _ ->
             tvTitle.text = "Thông báo"
             tvContent.text = "Hết phiên đăng nhập. Vui lòng đăng nhập lại để tiếp tục."
             dialog.setCancelable(false)
@@ -52,11 +52,26 @@ object Dialog {
             btnAccept.setOnClickListener {
                 dialog.dismiss()
                 AuthToken.storeToken(activity, Token())
-                val intent = Intent(activity, LoginActivity::class.java)
+                val intent = Intent(activity, MainActivity::class.java)
                 activity.startActivity(intent)
                 activity.finish()
             }
 
+            dialog.show()
+        }
+    }
+
+
+    fun createDialogConnectionError(activity: Activity){
+        createDialog(activity){
+            dialog, tvTitle, tvContent, btnAccept, _ ->
+            dialog.setCancelable(false)
+            tvTitle.text = "Lỗi kết nối"
+            tvContent.text = "Lỗi kết nối đến máy chủ. Vui lòng kiểm tra lại."
+
+            btnAccept.setOnClickListener {
+                dialog.dismiss()
+            }
             dialog.show()
         }
     }
@@ -73,7 +88,6 @@ object Dialog {
         val btnSelectDate: Button = dialog.findViewById(R.id.btn_select_date)
         val btnSelectTime: Button = dialog.findViewById(R.id.btn_select_time)
         val btnAccept: Button = dialog.findViewById(R.id.btn_accept)
-        val btnCancel: Button = dialog.findViewById(R.id.btn_cancel)
 
         val currentDateTime = Calendar.getInstance()
         val dateTimeExpired = Calendar.getInstance()

@@ -1,45 +1,34 @@
 package com.example.library.activity
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.Patterns
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowInsetsControllerCompat
-import com.example.library.R
 import com.example.library.api.AuthApi
 import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityLoginBinding
 import com.example.library.model.Token
-import com.example.library.utils.AuthDBHelper
 import com.example.library.utils.AuthToken
 import com.example.library.utils.Dialog
-import com.example.library.utils.Utils
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("DEPRECATION")
 @SuppressLint("SetTextI18n")
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         enableEdgeToEdge()
@@ -57,15 +46,18 @@ class LoginActivity : AppCompatActivity() {
                 val email = binding.edtEmail.text.toString().trim()
                 val password = binding.edtPassword.text.toString().trim()
 
+                //gọi api
                 val data = authApi.login(email, password)
                 data.enqueue(object : Callback<Token> {
                     override fun onResponse(call: Call<Token>, response: Response<Token>) {
+                        //gọi không thành công
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
                             val errorResponse =
                                 Gson().fromJson(errorBody, ErrorResponse::class.java)
                             binding.progressBar.visibility = View.GONE
-                            Dialog.createDialog(this@LoginActivity) { dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                            //tạo dialog và in ra lỗi
+                            Dialog.createDialog(this@LoginActivity) { dialog, tvTitle, tvContent, btnAccept, _ ->
                                 dialog.setCancelable(true)
 
                                 tvTitle.text = "Lỗi đăng nhập!"
@@ -75,7 +67,9 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 dialog.show()
                             }
-                        } else {
+                        }
+                        //gọi thành công
+                        else {
                             Handler(Looper.myLooper()!!).postDelayed({
                                 val result = response.body()
                                 if (result != null) {
@@ -86,10 +80,12 @@ class LoginActivity : AppCompatActivity() {
                                         result.expirationAccessTokenTime,
                                         result.expirationRefreshTokenTime
                                     )
+                                    //lưu lại token
                                     AuthToken.storeToken(this@LoginActivity, token)
-                                    val intent =
-                                        Intent(this@LoginActivity, MainActivity::class.java)
-                                    startActivity(intent)
+
+                                    //lưu session isLogin = true để thực hiện cho các tác vụ cần thiết
+                                    val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+                                    sharedPreferences.edit().putBoolean("isLogin", true).apply()
                                     finish()
                                 }
                             }, 1000)
@@ -97,15 +93,15 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<Token>, t: Throwable) {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Có lỗi gì đó xảy ra!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Dialog.createDialogConnectionError(this@LoginActivity)
                         binding.progressBar.visibility = View.GONE
                     }
                 })
             }
+        }
+
+        binding.btnBack.setOnClickListener {
+            onBackPressed()
         }
 
         binding.btnRegister.setOnClickListener {

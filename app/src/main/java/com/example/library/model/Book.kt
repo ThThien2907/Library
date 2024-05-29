@@ -11,7 +11,8 @@ data class Book (
     @SerializedName("description"    ) var description   : String? = null,
     @SerializedName("category_code"  ) var categoryCode  : String? = null,
     @SerializedName("author"         ) var author        : String? = null,
-    @SerializedName("category_value" ) var categoryValue : String? = null
+    @SerializedName("category_value" ) var categoryValue : String? = null,
+    @SerializedName("free"           ) var free          : String? = null
 
 ): Serializable
 data class Books(

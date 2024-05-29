@@ -2,43 +2,36 @@ package com.example.library.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.Patterns
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsControllerCompat
-import com.example.library.R
 import com.example.library.api.AuthApi
 import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.databinding.ActivityRegisterBinding
 import com.example.library.model.Token
 import com.example.library.utils.Dialog
-import com.example.library.utils.Utils
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@Suppress("DEPRECATION")
 @SuppressLint("SetTextI18n")
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private var authApi = RetrofitService.getInstance().create(AuthApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         enableEdgeToEdge()
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -53,15 +46,18 @@ class RegisterActivity : AppCompatActivity() {
                 val password = binding.edtPassword.text.toString().trim()
                 val confirmPassword = binding.edtConfirmPassword.text.toString().trim()
 
+                //gọi api
                 val data = authApi.register(name, email, password, confirmPassword)
                 data.enqueue(object : Callback<Token> {
                     override fun onResponse(call: Call<Token>, response: Response<Token>) {
+                        //gọi không thành công
                         if (!response.isSuccessful) {
                             val errorBody = response.errorBody()?.string()
                             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
                             binding.progressBar.visibility = View.GONE
+                            //tạo dialog và in ra lỗi
                             Dialog.createDialog(this@RegisterActivity){
-                                dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                                dialog, tvTitle, tvContent, btnAccept, _ ->
                                 dialog.setCancelable(true)
                                 tvTitle.text = "Lỗi đăng ký!"
                                 tvContent.text = errorResponse.errors[0]
@@ -72,11 +68,13 @@ class RegisterActivity : AppCompatActivity() {
                                 dialog.show()
                             }
                         }
+                        //gọi thành công
                         else {
                             Handler(Looper.myLooper()!!).postDelayed( {
                                 val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                                //tạo dialog thông báo đăng ký thành công và chuyển màn hình qua đăng nhập
                                 Dialog.createDialog(this@RegisterActivity){
-                                    dialog, tvTitle, tvContent, btnAccept, btnCancel ->
+                                    dialog, tvTitle, tvContent, btnAccept, _ ->
                                     tvTitle.text = "Thành công!"
                                     tvContent.text = "Đăng ký tài khoản thành công. Mời bạn đăng nhập."
 
@@ -93,11 +91,7 @@ class RegisterActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<Token>, t: Throwable) {
-                        Toast.makeText(
-                            this@RegisterActivity,
-                            "Có lỗi gì đó xảy ra. Vui lòng thử lại!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Dialog.createDialogConnectionError(this@RegisterActivity)
                         binding.progressBar.visibility = View.GONE
 
                     }
@@ -105,6 +99,9 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
+        binding.btnBack.setOnClickListener {
+            onBackPressed()
+        }
 
         binding.btnLogin.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE

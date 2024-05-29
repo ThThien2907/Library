@@ -1,6 +1,7 @@
 package com.example.library.activity.fragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -9,9 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.library.R
+import com.example.library.activity.LoginActivity
 import com.example.library.databinding.FragmentHistoryBinding
-import com.example.library.utils.AuthDBHelper
 import com.example.library.utils.OnReloadListener
+import com.example.library.utils.Utils
 import com.google.android.material.tabs.TabLayout
 
 @Suppress("DEPRECATION")
@@ -21,7 +23,7 @@ class HistoryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRelo
     private var borrowPendingFragment = BorrowPendingFragment()
     private var borrowRejectedFragment = BorrowRejectedFragment()
 
-    private var currentFragment: Fragment = borrowAcceptedFragment
+    private lateinit var currentFragment: Fragment
 
 
     override fun onCreateView(
@@ -36,46 +38,68 @@ class HistoryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRelo
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //Ánh xạ view
-        val tabLayout = binding.tabLayoutHistory
 
         binding.swipeRefreshLayout.setOnRefreshListener(this@HistoryFragment)
 
-        //Set tiêu đề cho các tab
-        tabLayout.addTab(tabLayout.newTab().setText("Hoàn thành"))
-        tabLayout.addTab(tabLayout.newTab().setText("Đang xử lí"))
-        tabLayout.addTab(tabLayout.newTab().setText("Bị từ chối"))
+        currentFragment = borrowAcceptedFragment
 
-        childFragmentManager.beginTransaction().apply {
-            add(R.id.container_layout_history, borrowAcceptedFragment)
-            add(R.id.container_layout_history, borrowPendingFragment).hide(borrowPendingFragment)
-            add(R.id.container_layout_history, borrowRejectedFragment).hide(borrowRejectedFragment)
-        }.commit()
+        //kiểm tra đăng nhập
+        if (!Utils.isLogin(requireActivity()))
+        {
+            binding.container.visibility = View.GONE
+            binding.layoutRequireLogin.visibility = View.VISIBLE
+        }
+        else {
+            binding.container.visibility = View.VISIBLE
+            binding.layoutRequireLogin.visibility = View.GONE
 
-        //lắng nghe sự kiện khi click trên các tab
-        tabLayout.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab!!.position){
-                    0 -> {
-                        replaceFragment(borrowAcceptedFragment)
-                    }
+            //Ánh xạ view
+            val tabLayout = binding.tabLayoutHistory
 
-                    1 -> {
-                        replaceFragment(borrowPendingFragment)
-                    }
+            //Set tiêu đề cho các tab
+            tabLayout.addTab(tabLayout.newTab().setText("Hoàn thành"))
+            tabLayout.addTab(tabLayout.newTab().setText("Đang xử lí"))
+            tabLayout.addTab(tabLayout.newTab().setText("Bị từ chối"))
 
-                    2 -> {
-                        replaceFragment(borrowRejectedFragment)
+            //add các fragment vào fragment manager
+            childFragmentManager.beginTransaction().apply {
+                add(R.id.container_layout_history, borrowAcceptedFragment)
+                add(R.id.container_layout_history, borrowPendingFragment).hide(borrowPendingFragment)
+                add(R.id.container_layout_history, borrowRejectedFragment).hide(borrowRejectedFragment)
+            }.commit()
+
+            tabLayout.selectTab(tabLayout.getTabAt(0))
+            //lắng nghe sự kiện khi click trên các tab
+            tabLayout.setOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    when (tab!!.position){
+                        0 -> {
+                            replaceFragment(borrowAcceptedFragment)
+                        }
+
+                        1 -> {
+                            replaceFragment(borrowPendingFragment)
+                        }
+
+                        2 -> {
+                            replaceFragment(borrowRejectedFragment)
+                        }
                     }
                 }
-            }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                }
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
-        })
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+                }
+            })
+
+        }
+
+        binding.btnLogin.setOnClickListener {
+            val intent = Intent(activity, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onRefresh() {
@@ -90,7 +114,7 @@ class HistoryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OnRelo
             remove(borrowAcceptedFragment)
             remove(borrowPendingFragment)
             remove(borrowRejectedFragment)
-        }.commit()
+        }.commitNow()
         parentFragmentManager.beginTransaction().detach(this).commitNow()
         parentFragmentManager.beginTransaction().attach(this).commitNow()
     }

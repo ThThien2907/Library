@@ -2,14 +2,9 @@ package com.example.library.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.util.Log
-import com.example.library.activity.LoginActivity
 import com.example.library.api.AuthApi
-import com.example.library.api.ErrorResponse
 import com.example.library.api.RetrofitService
 import com.example.library.model.Token
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

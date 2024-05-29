@@ -2,7 +2,6 @@ package com.example.library.adapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -10,7 +9,7 @@ import android.widget.TextView
 import com.example.library.R
 import com.example.library.model.Category
 
-class CategoryAdapter(var context: Activity, var resource: Int, var objects: List<Category>):
+class CategoryAdapter(var context: Activity, resource: Int, private var objects: List<Category>):
     ArrayAdapter<Category>(context, resource, objects) {
 
     @SuppressLint("ViewHolder", "InflateParams")

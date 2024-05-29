@@ -8,6 +8,19 @@
     tools:context=".activity.LoginActivity"
     tools:ignore="MissingConstraints">
 
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_gray_oval"
+        android:src="@drawable/ic_back"
+        android:translationZ="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
     <LinearLayout
         android:id="@+id/progress_bar"
         android:layout_width="100dp"

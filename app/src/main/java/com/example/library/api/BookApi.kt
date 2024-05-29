@@ -14,8 +14,11 @@ interface BookApi {
     @GET("book/get_all_categories.php")
     fun getAllCategory(): Call<Categories>
 
-    @GET("book/get_books.php")
+    @GET("book/get_book_by_id.php")
     fun getBookByID(@Query("id") id: Int): Call<BookByID>
+
+    @GET("book/get_books.php")
+    fun getBookByFree(@Query("limit") limit: Int, @Query("page") page: Int, @Query("free") free: Int): Call<Books>
 
     @GET("book/get_books.php")
     fun getBookByCategory(@Query("limit") limit: Int, @Query("page") page: Int, @Query("category_code") category_code: String): Call<Books>
