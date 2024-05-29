@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
             }
         }
         else {
-            Handler(Looper.getMainLooper()).postDelayed( {
+            Handler(Looper.myLooper()!!).postDelayed( {
                 //nếu như đã tồn tại token thì refresh lại token đó
                 if (token.refreshToken != null) {
                     AuthToken.refresh(this, token.refreshToken!!){

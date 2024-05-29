@@ -76,7 +76,6 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
         binding.rcvBook.adapter = adapterBook
         val layoutManager = GridLayoutManager(context, 3)
         binding.rcvBook.layoutManager = layoutManager
-//        binding.rcvBook.setItemViewCacheSize(12)
         //#endregion
 
         initBanner()
@@ -182,6 +181,7 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     private fun initBook() {
         currentPage = 1
         isLastPage = false
+        isLoading = true
         listBook = ArrayList()
         binding.loadingBook2.visibility = View.VISIBLE
         binding.tvNotification.visibility = View.GONE
@@ -220,9 +220,7 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     }
 
     private fun loadDataBookByCategoryAndTitle() {
-
-        var data =
-            bookApi.getBookByTitleAndCategory(limitPerPage, currentPage, categoryCode, titleSearch)
+        var data = bookApi.getBookByTitleAndCategory(limitPerPage, currentPage, categoryCode, titleSearch)
         data.enqueue(object : Callback<Books> {
             override fun onResponse(call: Call<Books>, response: Response<Books>) {
                 Handler().postDelayed({
@@ -239,7 +237,7 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
 
                                 //Kiểm tra trang tiếp theo của thể loại này có tồn tại sách nào không
                                 data =
-                                    bookApi.getBookByTitle(limitPerPage, currentPage, titleSearch)
+                                    bookApi.getBookByTitleAndCategory(limitPerPage, currentPage, categoryCode, titleSearch)
                                 data.enqueue(object : Callback<Books> {
                                     override fun onResponse(
                                         call: Call<Books>,
@@ -248,27 +246,30 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
                                         val result1 = response.body()
                                         if (result1 != null) {
                                             //Nếu có thì ProgressBar loading_more sẽ hiện lên
-                                            if (result1.message == "Successfully")
+                                            if (result1.message == "Successfully") {
                                                 binding.loadingMore.visibility = View.VISIBLE
+                                            }
                                             //Ngược lại thì ẩn đi và isLastPage bằng true để không load thêm nữa
                                             else {
                                                 binding.loadingMore.visibility = View.GONE
                                                 isLastPage = true
                                             }
                                         }
+                                        isLoading = false
                                     }
 
                                     override fun onFailure(call: Call<Books>, t: Throwable) {
+                                        isLoading = false
                                     }
                                 })
                             } else {
+                                listBook = ArrayList()
                                 adapterBook.setData(listBook)
                                 binding.tvNotification.visibility = View.VISIBLE
                                 binding.loadingMore.visibility = View.GONE
                                 binding.loadingBook2.visibility = View.GONE
                                 isLastPage = true
                             }
-                            isLoading = false
                         }
                     }
                 }, 1000)
@@ -282,7 +283,6 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     }
 
     private fun loadDataBookByTitle() {
-
         var data = bookApi.getBookByTitle(limitPerPage, currentPage, titleSearch)
         data.enqueue(object : Callback<Books> {
             override fun onResponse(call: Call<Books>, response: Response<Books>) {
@@ -317,19 +317,21 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
                                                 isLastPage = true
                                             }
                                         }
+                                        isLoading = false
                                     }
 
                                     override fun onFailure(call: Call<Books>, t: Throwable) {
+                                        isLoading = false
                                     }
                                 })
                             } else {
+                                listBook = ArrayList()
                                 adapterBook.setData(listBook)
                                 binding.tvNotification.visibility = View.VISIBLE
                                 binding.loadingMore.visibility = View.GONE
                                 binding.loadingBook2.visibility = View.GONE
                                 isLastPage = true
                             }
-                            isLoading = false
                         }
                     }
                 }, 1000)
@@ -343,7 +345,6 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     }
 
     private fun loadDataBookByCategory() {
-
         var data = bookApi.getBookByCategory(limitPerPage, currentPage, categoryCode)
         data.enqueue(object : Callback<Books> {
             override fun onResponse(call: Call<Books>, response: Response<Books>) {
@@ -377,15 +378,16 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
                                             isLastPage = true
                                         }
                                     }
+                                    isLoading = false
                                 }
 
                                 override fun onFailure(call: Call<Books>, t: Throwable) {
+                                    isLoading = false
                                 }
                             })
                         } else {
                             isLastPage = true
                         }
-                        isLoading = false
                     }
                 }, 1000)
             }

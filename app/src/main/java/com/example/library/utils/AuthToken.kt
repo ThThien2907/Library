@@ -14,13 +14,15 @@ object AuthToken {
     fun refreshToken(activity: Activity, onRefreshComplete:(token: Token) -> Unit){
         val token = getToken(activity)
 
-        if (isAccessTokenExpired(token.expirationAccessTokenTime)){
-            refresh(activity, token.refreshToken!!){
-                newToken -> onRefreshComplete(newToken)
+        if (token.refreshToken != null){
+            if (isAccessTokenExpired(token.expirationAccessTokenTime)){
+                refresh(activity, token.refreshToken!!){
+                        newToken -> onRefreshComplete(newToken)
+                }
             }
-        }
-        else {
-            onRefreshComplete(token)
+            else {
+                onRefreshComplete(token)
+            }
         }
     }
 
