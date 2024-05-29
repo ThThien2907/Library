@@ -499,9 +499,14 @@ class HomeFragment : Fragment(), OnItemBookClickListener, SwipeRefreshLayout.OnR
     override fun onRefresh() {
         Handler().postDelayed({
             resetData()
-            parentFragmentManager.beginTransaction().detach(this).commitNowAllowingStateLoss()
-            parentFragmentManager.beginTransaction().attach(this).commitNowAllowingStateLoss()
-            binding.swipeRefreshLayout.isRefreshing = false
+            binding.nestedScrollView.smoothScrollTo(0,0)
+            binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                if (scrollY == 0){
+                    parentFragmentManager.beginTransaction().detach(this).commitNowAllowingStateLoss()
+                    parentFragmentManager.beginTransaction().attach(this).commitNowAllowingStateLoss()
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }
+            }
         }, 1000)
     }
 }
