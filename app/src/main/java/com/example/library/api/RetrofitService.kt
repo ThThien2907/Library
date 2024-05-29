@@ -11,7 +11,7 @@ object RetrofitService {
 
     fun getInstance(): Retrofit {
         return Retrofit.Builder()
-                //truyền vô địa chỉ ip của máy chủ
+                //truyền vô địa chỉ url của máy chủ
             .baseUrl("http://10.0.68.231/CT06/do_an/api/routes/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
