@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitService {
+
     private val gson: Gson
         get() = GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
 
